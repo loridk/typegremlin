@@ -1,5 +1,14 @@
-const SHORTCUT = ";email";
-const REPLACEMENT = "test@example.com";
+const snippets = {
+  ";email": "test@example.com",
+  ";hello": "Hello there!",
+};
+
+// execCommand is deprecated, but currently preserves native undo history
+// better than direct value manipulation for this use case.
+// Revisit if a reliable modern replacement becomes available.
+function insertTextWithUndo(text) {
+  return document.execCommand("insertText", false, text);
+}
 
 document.addEventListener("input", (event) => {
   const target = event.target;
@@ -11,23 +20,7 @@ document.addEventListener("input", (event) => {
     target.id?.toLowerCase().includes("password") ||
     target.id?.toLowerCase().includes("passwd");
 
-  // execCommand is deprecated, but currently preserves native undo history
-  // better than direct value manipulation for this use case.
-  // Revisit if a reliable modern replacement becomes available.
-  function insertTextWithUndo(text) {
-    return document.execCommand("insertText", false, text);
-  }
-
   if (isSensitiveField) {
-    return;
-  }
-
-  if (
-    !(
-      target instanceof HTMLInputElement ||
-      target instanceof HTMLTextAreaElement
-    )
-  ) {
     return;
   }
 
@@ -39,12 +32,14 @@ document.addEventListener("input", (event) => {
 
   const textBeforeCursor = target.value.slice(0, cursorPosition);
 
-  if (textBeforeCursor.endsWith(SHORTCUT)) {
-    console.log("😈 TypeGremlin spotted:", SHORTCUT);
-    const shortcutStart = cursorPosition - SHORTCUT.length;
+  for (const [shortcut, replacement] of Object.entries(snippets)) {
+    if (textBeforeCursor.endsWith(shortcut)) {
+      const shortcutStart = cursorPosition - shortcut.length;
 
-    target.setSelectionRange(shortcutStart, cursorPosition);
+      target.setSelectionRange(shortcutStart, cursorPosition);
+      insertTextWithUndo(replacement);
 
-    insertTextWithUndo(REPLACEMENT);
+      break;
+    }
   }
 });

@@ -134,3 +134,16 @@ A second approach using `document.execCommand("insertText")` was tested. Althoug
 The deprecated API has been isolated in an `insertTextWithUndo()` helper rather than used throughout the expansion logic. This makes the dependency explicit and gives TypeGremlin a single place to replace the implementation if a reliable modern alternative becomes available.
 
 For now, preserving expected keyboard and undo behavior was prioritized over avoiding the deprecated API entirely.
+
+### Multiple Shortcut Support
+
+Refactored the initial single hard-coded shortcut into a collection of snippets.
+
+TypeGremlin can now recognize and expand multiple shortcuts, including:
+
+- `;email` → `test@example.com`
+- `;hello` → `Hello there!`
+
+The expansion logic now iterates through the available snippets and stops after finding a matching shortcut.
+
+This separates the expansion engine from any individual shortcut and prepares TypeGremlin for user-defined snippets stored outside the content script.
