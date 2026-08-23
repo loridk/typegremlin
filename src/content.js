@@ -1,7 +1,15 @@
-const snippets = {
-  ";email": "test@example.com",
-  ";hello": "Hello there!",
-};
+let snippets = {};
+
+async function loadSnippets() {
+  const result = await chrome.storage.local.get("snippets");
+
+  snippets = result.snippets ?? {
+    ";email": "test@example.com",
+    ";hello": "Hello there!",
+  };
+}
+
+loadSnippets();
 
 // execCommand is deprecated, but currently preserves native undo history
 // better than direct value manipulation for this use case.

@@ -147,3 +147,20 @@ TypeGremlin can now recognize and expand multiple shortcuts, including:
 The expansion logic now iterates through the available snippets and stops after finding a matching shortcut.
 
 This separates the expansion engine from any individual shortcut and prepares TypeGremlin for user-defined snippets stored outside the content script.
+
+### Local Snippet Storage
+
+Added Chrome's `storage` permission and updated TypeGremlin to load snippets using `chrome.storage.local`.
+
+The extension currently falls back to development snippets when no stored snippet collection exists:
+
+- `;email` → `test@example.com`
+- `;hello` → `Hello there!`
+
+This separates snippet data from the expansion engine and prepares the extension for user-created snippets.
+
+The `storage` permission was added specifically because persistent snippet storage requires it. No additional Chrome permissions were added.
+
+TypeGremlin continues to follow a minimum-permissions approach: browser capabilities will only be requested when a feature has a specific need for them.
+
+Snippet data remains local and is not transmitted to a server.
