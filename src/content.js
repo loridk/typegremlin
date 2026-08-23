@@ -1,4 +1,5 @@
 const SHORTCUT = ";email";
+const REPLACEMENT = "test@example.com";
 
 document.addEventListener("input", (event) => {
   const target = event.target;
@@ -33,5 +34,8 @@ document.addEventListener("input", (event) => {
 
   if (textBeforeCursor.endsWith(SHORTCUT)) {
     console.log("😈 TypeGremlin spotted:", SHORTCUT);
+    const shortcutStart = cursorPosition - SHORTCUT.length;
+
+    target.setRangeText(REPLACEMENT, shortcutStart, cursorPosition, "end");
   }
 });
