@@ -188,3 +188,30 @@ site incorrectly exposes the control as `type="text"`.
 The content script also listens for changes to local snippet storage so future
 settings changes can take effect in already-open pages without requiring a page
 refresh.
+
+### TypeScript Migration
+
+Migrated the background service worker and content script from JavaScript to
+strict TypeScript. TypeScript was introduced both as a learning goal and to make
+TypeGremlin's storage, Chrome API, and DOM boundaries more explicit and safer as
+the extension grows.
+
+The build remains intentionally small. TypeGremlin uses the TypeScript compiler
+and Chrome type definitions without adding a framework or bundler. Authored
+TypeScript remains in `src/`, while Chrome loads the generated JavaScript from
+`dist/`.
+
+Strict checking immediately identified values whose contracts had previously
+been implicit, including the text passed to the undo helper, supported form
+control types, and the structure of snippets loaded from Chrome storage.
+
+Because TypeScript types do not exist at runtime, stored snippet data is now
+validated before use. The content script accepts only a non-array object with
+non-empty shortcut names and string replacements. Invalid stored data safely
+falls back to an empty snippet collection rather than being trusted through a
+type assertion.
+
+The migration was verified with the TypeScript checker and compiler. Manual
+Chrome testing confirmed that standard input and textarea expansion, native
+undo behavior, and sensitive password-field blocking continue to work after
+Chrome was updated to load the compiled files.

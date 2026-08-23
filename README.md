@@ -13,17 +13,33 @@ The proof of concept currently:
 - preserves Chrome's native undo behavior for tested standard fields; and
 - requests only Chrome's `storage` permission.
 
+TypeGremlin uses strict TypeScript with a minimal compiler-only build process.
+Chrome runs the generated JavaScript in `dist/`; no framework or bundler is
+currently required.
+
 Support for `contenteditable` and rich-text editors is planned but is not yet
 implemented. The included snippets are development examples, not a settings
 interface.
 
 ## Local development
 
-1. Open `chrome://extensions` in Chrome.
-2. Turn on **Developer mode**.
-3. Choose **Load unpacked** and select this project folder.
-4. After changing the source, reload TypeGremlin and refresh the page used for
-   testing.
+1. Install the development dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Compile the TypeScript source:
+
+   ```bash
+   npm run build
+   ```
+
+3. Open `chrome://extensions` in Chrome.
+4. Turn on **Developer mode**.
+5. Choose **Load unpacked** and select this project folder.
+6. After changing the TypeScript source, run `npm run build`, reload
+   TypeGremlin, and refresh the page used for testing.
 
 TypeGremlin runs on all regular webpage URLs so it can expand text wherever the
 user types. It does not request access to tabs, browsing history, cookies, the

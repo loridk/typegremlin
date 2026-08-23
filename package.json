@@ -1,0 +1,16 @@
+{
+  "name": "typegremlin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A privacy-first, open-source text expander for your browser.",
+  "license": "GPL-3.0-only",
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.2.7",
+    "typescript": "^7.0.2"
+  }
+}

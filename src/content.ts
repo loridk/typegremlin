@@ -1,28 +1,47 @@
-let snippets = {};
+type SnippetCollection = Record<string, string>;
+let snippets: SnippetCollection = {};
+
+function getSnippetCollection(value: unknown): SnippetCollection {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return {};
+  }
+
+  const validSnippets: SnippetCollection = {};
+
+  for (const [shortcut, replacement] of Object.entries(value)) {
+    if (shortcut.length === 0 || typeof replacement !== "string") {
+      return {};
+    }
+
+    validSnippets[shortcut] = replacement;
+  }
+
+  return validSnippets;
+}
 
 async function loadSnippets() {
   const { snippets: storedSnippets } =
     await chrome.storage.local.get("snippets");
 
-  snippets = storedSnippets ?? {};
+  snippets = getSnippetCollection(storedSnippets);
 }
 
 void loadSnippets();
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
   if (areaName === "local" && changes.snippets) {
-    snippets = changes.snippets.newValue ?? {};
+    snippets = getSnippetCollection(changes.snippets.newValue);
   }
 });
 
 // execCommand is deprecated, but currently preserves native undo history
 // better than direct value manipulation for this use case.
 // Revisit if a reliable modern replacement becomes available.
-function insertTextWithUndo(text) {
+function insertTextWithUndo(text: string) {
   return document.execCommand("insertText", false, text);
 }
 
-function isSensitiveField(target) {
+function isSensitiveField(target: HTMLInputElement | HTMLTextAreaElement) {
   const autocompleteTokens = target.autocomplete.toLowerCase().split(/\s+/);
   const fieldIdentifiers = `${target.name} ${target.id}`.toLowerCase();
 
@@ -38,7 +57,12 @@ function isSensitiveField(target) {
 document.addEventListener("input", (event) => {
   const target = event.target;
 
-  if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) {
+  if (
+    !(
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement
+    )
+  ) {
     return;
   }
 
