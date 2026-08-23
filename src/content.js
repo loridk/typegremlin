@@ -1,15 +1,19 @@
 let snippets = {};
 
 async function loadSnippets() {
-  const result = await chrome.storage.local.get("snippets");
+  const { snippets: storedSnippets } =
+    await chrome.storage.local.get("snippets");
 
-  snippets = result.snippets ?? {
-    ";email": "test@example.com",
-    ";hello": "Hello there!",
-  };
+  snippets = storedSnippets ?? {};
 }
 
-loadSnippets();
+void loadSnippets();
+
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === "local" && changes.snippets) {
+    snippets = changes.snippets.newValue ?? {};
+  }
+});
 
 // execCommand is deprecated, but currently preserves native undo history
 // better than direct value manipulation for this use case.
@@ -18,17 +22,27 @@ function insertTextWithUndo(text) {
   return document.execCommand("insertText", false, text);
 }
 
+function isSensitiveField(target) {
+  const autocompleteTokens = target.autocomplete.toLowerCase().split(/\s+/);
+  const fieldIdentifiers = `${target.name} ${target.id}`.toLowerCase();
+
+  return (
+    target.type === "password" ||
+    autocompleteTokens.includes("current-password") ||
+    autocompleteTokens.includes("new-password") ||
+    fieldIdentifiers.includes("password") ||
+    fieldIdentifiers.includes("passwd")
+  );
+}
+
 document.addEventListener("input", (event) => {
   const target = event.target;
-  const isSensitiveField =
-    target.type === "password" ||
-    target.autocomplete === "current-password" ||
-    target.autocomplete === "new-password" ||
-    target.name?.toLowerCase().includes("password") ||
-    target.id?.toLowerCase().includes("password") ||
-    target.id?.toLowerCase().includes("passwd");
 
-  if (isSensitiveField) {
+  if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) {
+    return;
+  }
+
+  if (isSensitiveField(target)) {
     return;
   }
 

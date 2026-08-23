@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "description": "A privacy-first, open-source text expander for your browser.",
   "permissions": ["storage"],
+  "background": {
+    "service_worker": "src/background.js"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

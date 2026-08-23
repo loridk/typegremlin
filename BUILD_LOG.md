@@ -152,7 +152,7 @@ This separates the expansion engine from any individual shortcut and prepares Ty
 
 Added Chrome's `storage` permission and updated TypeGremlin to load snippets using `chrome.storage.local`.
 
-The extension currently falls back to development snippets when no stored snippet collection exists:
+On installation, the background service worker initializes storage with two development snippets when no snippet collection exists:
 
 - `;email` → `test@example.com`
 - `;hello` → `Hello there!`
@@ -164,3 +164,27 @@ The `storage` permission was added specifically because persistent snippet stora
 TypeGremlin continues to follow a minimum-permissions approach: browser capabilities will only be requested when a feature has a specific need for them.
 
 Snippet data remains local and is not transmitted to a server.
+
+### Storage Initialization and Content-Script Guardrails
+
+Added a Manifest V3 background service worker to initialize the development
+snippet collection without making the content script responsible for extension
+lifecycle state.
+
+Initialization is safe to run after either an install or an update because it
+only writes defaults when the `snippets` key is missing. Existing user data is
+left unchanged.
+
+The content script now ignores `input` events unless their target is a standard
+HTML input or textarea. This prevents errors on pages that dispatch input events
+from unsupported controls such as `contenteditable` elements. Rich-text support
+remains planned work rather than being partially or silently implemented.
+
+Sensitive-field detection now treats `autocomplete` as a token list and checks
+both the field name and ID for common `password` and `passwd` identifiers. This
+keeps the real-world Yahoo-style password-field guard conservative even when a
+site incorrectly exposes the control as `type="text"`.
+
+The content script also listens for changes to local snippet storage so future
+settings changes can take effect in already-open pages without requiring a page
+refresh.
