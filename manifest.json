@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "TypeGremlin",
+  "version": "0.1.0",
+  "description": "A privacy-first, open-source text expander for your browser.",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.js"]
+    }
+  ]
+}
