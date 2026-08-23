@@ -83,3 +83,54 @@ This log will record more than completed features.
 Unexpected browser behavior, failed approaches, accessibility findings, security decisions, architectural changes, and technical tradeoffs will also be documented.
 
 Those decisions are an important part of TypeGremlin's development story—and will eventually form the basis of a project case study and blog post.
+
+### First Working Text Expansion
+
+Implemented the first functional TypeGremlin expansion.
+
+The initial hard-coded shortcut:
+
+`;email` → `test@example.com`
+
+TypeGremlin now:
+
+- Detects a shortcut immediately before the cursor.
+- Replaces only the shortcut rather than rewriting the entire field.
+- Preserves text before and after the shortcut.
+- Places the cursor at the end of the inserted replacement.
+- Supports inserting a shortcut in the middle of existing text.
+- Continues to skip fields identified as sensitive.
+
+The implementation uses the browser's native `setRangeText()` method to replace the exact shortcut range.
+
+Testing confirmed basic expansion works correctly in standard text inputs and textareas.
+
+### Undo Behavior Finding
+
+Testing revealed that TypeGremlin's initial `setRangeText()` implementation does not integrate correctly with Chrome's native undo history.
+
+After expanding:
+
+`;email` → `test@example.com`
+
+pressing Ctrl+Z does not reliably restore the original shortcut.
+
+This matters because predictable undo behavior is part of normal keyboard interaction and is especially important for an extension that modifies user-entered text.
+
+The initial replacement approach will need to be revised or supplemented so TypeGremlin's expansions participate in native browser edit history.
+
+### Preserving Native Undo Behavior
+
+Initial text expansion used `setRangeText()`, which correctly replaced the shortcut and preserved the cursor position. Testing revealed, however, that the resulting change did not behave correctly with Chrome's native undo history.
+
+After expanding:
+
+`;email` → `test@example.com`
+
+pressing Ctrl+Z did not reliably restore the original `;email` shortcut.
+
+A second approach using `document.execCommand("insertText")` was tested. Although `execCommand()` is deprecated, this approach correctly participates in Chrome's native editing history: pressing Ctrl+Z after an expansion restores the original shortcut.
+
+The deprecated API has been isolated in an `insertTextWithUndo()` helper rather than used throughout the expansion logic. This makes the dependency explicit and gives TypeGremlin a single place to replace the implementation if a reliable modern alternative becomes available.
+
+For now, preserving expected keyboard and undo behavior was prioritized over avoiding the deprecated API entirely.

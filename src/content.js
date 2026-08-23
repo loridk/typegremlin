@@ -11,6 +11,13 @@ document.addEventListener("input", (event) => {
     target.id?.toLowerCase().includes("password") ||
     target.id?.toLowerCase().includes("passwd");
 
+  // execCommand is deprecated, but currently preserves native undo history
+  // better than direct value manipulation for this use case.
+  // Revisit if a reliable modern replacement becomes available.
+  function insertTextWithUndo(text) {
+    return document.execCommand("insertText", false, text);
+  }
+
   if (isSensitiveField) {
     return;
   }
@@ -36,6 +43,8 @@ document.addEventListener("input", (event) => {
     console.log("😈 TypeGremlin spotted:", SHORTCUT);
     const shortcutStart = cursorPosition - SHORTCUT.length;
 
-    target.setRangeText(REPLACEMENT, shortcutStart, cursorPosition, "end");
+    target.setSelectionRange(shortcutStart, cursorPosition);
+
+    insertTextWithUndo(REPLACEMENT);
   }
 });
