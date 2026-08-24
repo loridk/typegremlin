@@ -51,10 +51,12 @@
             ></textarea>
           </div>
 
-          <button type="submit">Add snippet</button>
+          <button id="snippet-submit" type="submit">Add snippet</button>
+
+          <button id="cancel-edit" type="button" hidden>Cancel editing</button>
         </form>
 
-        <p id="form-status" role="status"></p>
+        <p id="form-status" role="status" tabindex="-1"></p>
       </section>
 
       <section aria-labelledby="snippets-heading">

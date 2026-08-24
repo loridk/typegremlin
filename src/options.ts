@@ -22,10 +22,17 @@ function getValidSnippetEntries(
   return validEntries;
 }
 
+const formHeading = document.querySelector<HTMLHeadingElement>(
+  "#add-snippet-heading",
+);
 const snippetForm = document.querySelector<HTMLFormElement>("#snippet-form");
 const shortcutInput = document.querySelector<HTMLInputElement>("#shortcut");
 const replacementInput =
   document.querySelector<HTMLTextAreaElement>("#replacement");
+const submitButton =
+  document.querySelector<HTMLButtonElement>("#snippet-submit");
+const cancelEditButton =
+  document.querySelector<HTMLButtonElement>("#cancel-edit");
 const formStatus = document.querySelector<HTMLParagraphElement>("#form-status");
 const snippetList = document.querySelector<HTMLDListElement>("#snippet-list");
 const snippetStatus =
@@ -35,9 +42,12 @@ const snippetActionStatus = document.querySelector<HTMLParagraphElement>(
 );
 
 if (
+  !formHeading ||
   !snippetForm ||
   !shortcutInput ||
   !replacementInput ||
+  !submitButton ||
+  !cancelEditButton ||
   !formStatus ||
   !snippetList ||
   !snippetStatus ||
@@ -46,13 +56,74 @@ if (
   throw new Error("The snippet settings interface could not be initialized.");
 }
 
+const formHeadingElement = formHeading;
 const snippetFormElement = snippetForm;
 const shortcutInputElement = shortcutInput;
 const replacementInputElement = replacementInput;
+const submitButtonElement = submitButton;
+const cancelEditButtonElement = cancelEditButton;
 const formStatusElement = formStatus;
 const snippetListElement = snippetList;
 const snippetStatusElement = snippetStatus;
 const snippetActionStatusElement = snippetActionStatus;
+
+let editingShortcut: string | null = null;
+let editReturnFocus: HTMLButtonElement | null = null;
+
+function startEditingSnippet(
+  shortcut: string,
+  replacement: string,
+  editButton: HTMLButtonElement,
+): void {
+  editingShortcut = shortcut;
+  editReturnFocus = editButton;
+
+  shortcutInputElement.setCustomValidity("");
+  replacementInputElement.setCustomValidity("");
+
+  shortcutInputElement.value = shortcut;
+  replacementInputElement.value = replacement;
+
+  formHeadingElement.textContent = "Edit snippet";
+  submitButtonElement.textContent = "Save changes";
+  cancelEditButtonElement.hidden = false;
+
+  formStatusElement.textContent = `Editing ${shortcut}.`;
+
+  shortcutInputElement.focus();
+}
+
+function resetSnippetForm(): void {
+  editingShortcut = null;
+  editReturnFocus = null;
+
+  snippetFormElement.reset();
+
+  shortcutInputElement.setCustomValidity("");
+  replacementInputElement.setCustomValidity("");
+
+  formHeadingElement.textContent = "Add a snippet";
+  submitButtonElement.textContent = "Add snippet";
+  cancelEditButtonElement.hidden = true;
+}
+
+cancelEditButtonElement.addEventListener("click", () => {
+  const canceledShortcut = editingShortcut;
+  const returnFocusElement = editReturnFocus;
+
+  resetSnippetForm();
+
+  formStatusElement.textContent =
+    canceledShortcut === null
+      ? "Editing canceled."
+      : `Editing ${canceledShortcut} canceled.`;
+
+  if (returnFocusElement?.isConnected) {
+    returnFocusElement.focus();
+  } else {
+    shortcutInputElement.focus();
+  }
+});
 
 function getValidatedShortcut(): string | null {
   shortcutInputElement.setCustomValidity("");
@@ -104,21 +175,39 @@ function renderSnippetEntries(snippetEntries: Array<[string, string]>): void {
     const shortcutCode = document.createElement("code");
     const replacementDescription = document.createElement("dd");
     const replacementText = document.createElement("p");
-    const deleteControls = document.createElement("div");
+    const snippetActions = document.createElement("div");
+    const editButton = document.createElement("button");
     const deleteButton = document.createElement("button");
 
     shortcutCode.textContent = shortcut;
     replacementText.textContent = replacement;
+
+    editButton.type = "button";
+    editButton.textContent = `Edit ${shortcut}`;
+
     deleteButton.type = "button";
     deleteButton.textContent = `Delete ${shortcut}`;
 
-    deleteButton.addEventListener("click", () => {
-      showDeleteConfirmation(shortcut, deleteControls, deleteButton);
+    editButton.addEventListener("click", () => {
+      startEditingSnippet(shortcut, replacement, editButton);
     });
 
+    deleteButton.addEventListener("click", () => {
+      showDeleteConfirmation(
+        shortcut,
+        snippetActions,
+        editButton,
+        deleteButton,
+      );
+    });
+
+    if (editingShortcut === shortcut) {
+      editReturnFocus = editButton;
+    }
+
     shortcutTerm.append(shortcutCode);
-    deleteControls.append(deleteButton);
-    replacementDescription.append(replacementText, deleteControls);
+    snippetActions.append(editButton, deleteButton);
+    replacementDescription.append(replacementText, snippetActions);
     snippetListElement.append(shortcutTerm, replacementDescription);
   }
 
@@ -132,7 +221,8 @@ function renderSnippetEntries(snippetEntries: Array<[string, string]>): void {
 
 function showDeleteConfirmation(
   shortcut: string,
-  deleteControls: HTMLDivElement,
+  snippetActions: HTMLDivElement,
+  editButton: HTMLButtonElement,
   deleteButton: HTMLButtonElement,
 ): void {
   snippetActionStatusElement.textContent = "";
@@ -156,17 +246,23 @@ function showDeleteConfirmation(
   });
 
   cancelButton.addEventListener("click", () => {
-    deleteControls.replaceChildren(deleteButton);
+    snippetActions.replaceChildren(editButton, deleteButton);
+
     snippetActionStatusElement.textContent = `Deletion of ${shortcut} canceled.`;
+
     deleteButton.focus();
   });
 
-  deleteControls.replaceChildren(confirmationText, confirmButton, cancelButton);
+  snippetActions.replaceChildren(confirmationText, confirmButton, cancelButton);
 
   confirmButton.focus();
 }
 
 async function deleteSnippet(shortcut: string): Promise<void> {
+  submitButtonElement.disabled = true;
+  cancelEditButtonElement.disabled = true;
+  snippetListElement.inert = true;
+
   try {
     const { snippets: storedSnippets } =
       await chrome.storage.local.get("snippets");
@@ -189,11 +285,17 @@ async function deleteSnippet(shortcut: string): Promise<void> {
       ([existingShortcut]) => existingShortcut !== shortcut,
     );
 
-    const updatedSnippets = Object.fromEntries(remainingEntries);
-
     await chrome.storage.local.set({
-      snippets: updatedSnippets,
+      snippets: Object.fromEntries(remainingEntries),
     });
+
+    const deletedSnippetWasBeingEdited = editingShortcut === shortcut;
+
+    if (deletedSnippetWasBeingEdited) {
+      resetSnippetForm();
+
+      formStatusElement.textContent = `Editing ${shortcut} ended because it was deleted.`;
+    }
 
     renderSnippetEntries(remainingEntries);
 
@@ -207,6 +309,10 @@ async function deleteSnippet(shortcut: string): Promise<void> {
     snippetActionStatusElement.textContent =
       "TypeGremlin could not delete the snippet. Existing snippets were not changed.";
     snippetActionStatusElement.focus();
+  } finally {
+    submitButtonElement.disabled = false;
+    cancelEditButtonElement.disabled = false;
+    snippetListElement.inert = false;
   }
 }
 
@@ -229,7 +335,7 @@ async function displaySnippets(): Promise<void> {
   }
 }
 
-async function addSnippet(): Promise<void> {
+async function saveSnippet(): Promise<void> {
   formStatusElement.textContent = "";
 
   const shortcut = getValidatedShortcut();
@@ -246,6 +352,12 @@ async function addSnippet(): Promise<void> {
     return;
   }
 
+  const originalShortcut = editingShortcut;
+
+  submitButtonElement.disabled = true;
+  cancelEditButtonElement.disabled = true;
+  snippetListElement.inert = true;
+
   try {
     const { snippets: storedSnippets } =
       await chrome.storage.local.get("snippets");
@@ -256,9 +368,21 @@ async function addSnippet(): Promise<void> {
       throw new Error("Stored snippet data is invalid.");
     }
 
+    if (originalShortcut !== null) {
+      const originalStillExists = snippetEntries.some(
+        ([existingShortcut]) => existingShortcut === originalShortcut,
+      );
+
+      if (!originalStillExists) {
+        throw new Error("The snippet being edited no longer exists.");
+      }
+    }
+
     const normalizedShortcut = shortcut.toLowerCase();
+
     const shortcutAlreadyExists = snippetEntries.some(
       ([existingShortcut]) =>
+        existingShortcut !== originalShortcut &&
         existingShortcut.toLowerCase() === normalizedShortcut,
     );
 
@@ -272,29 +396,54 @@ async function addSnippet(): Promise<void> {
       return;
     }
 
-    const updatedSnippets = Object.fromEntries(snippetEntries);
+    let updatedEntries: Array<[string, string]>;
 
-    updatedSnippets[shortcut] = replacement;
+    if (originalShortcut === null) {
+      updatedEntries = [...snippetEntries, [shortcut, replacement]];
+    } else {
+      updatedEntries = snippetEntries.map(
+        ([existingShortcut, existingReplacement]): [string, string] =>
+          existingShortcut === originalShortcut
+            ? [shortcut, replacement]
+            : [existingShortcut, existingReplacement],
+      );
+    }
 
     await chrome.storage.local.set({
-      snippets: updatedSnippets,
+      snippets: Object.fromEntries(updatedEntries),
     });
 
-    snippetFormElement.reset();
-    await displaySnippets();
+    resetSnippetForm();
+    renderSnippetEntries(updatedEntries);
 
-    formStatusElement.textContent = `Added ${shortcut}.`;
-    shortcutInputElement.focus();
+    if (originalShortcut === null) {
+      formStatusElement.textContent = `Added ${shortcut}.`;
+      shortcutInputElement.focus();
+    } else {
+      formStatusElement.textContent =
+        originalShortcut === shortcut
+          ? `Updated ${shortcut}.`
+          : `Updated ${originalShortcut} to ${shortcut}.`;
+
+      formStatusElement.focus();
+    }
   } catch (error: unknown) {
-    console.error("TypeGremlin could not add the snippet:", error);
+    console.error("TypeGremlin could not save the snippet:", error);
+
     formStatusElement.textContent =
-      "TypeGremlin could not add the snippet. Existing snippets were not changed.";
+      "TypeGremlin could not save the snippet. Existing snippets were not changed.";
+
+    formStatusElement.focus();
+  } finally {
+    submitButtonElement.disabled = false;
+    cancelEditButtonElement.disabled = false;
+    snippetListElement.inert = false;
   }
 }
 
 snippetFormElement.addEventListener("submit", (event) => {
   event.preventDefault();
-  void addSnippet();
+  void saveSnippet();
 });
 
 void displaySnippets();

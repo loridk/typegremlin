@@ -293,3 +293,43 @@ Manual keyboard and Chrome testing covered opening and canceling confirmation,
 successful deletion, focus movement, count updates, removal from expansion on
 an already-open page, and continued operation of unaffected snippets. No new
 permission or dependency was added.
+
+### Accessible Snippet Editing
+
+Extended the existing snippet form to support editing both shortcuts and
+replacement text. Each saved entry now has a clearly named Edit button. Entering
+Edit mode fills the form with the current values, updates the form heading and
+submit-button text, reveals a native Cancel button, and moves focus to the
+shortcut field.
+
+The form tracks its mode with a `string | null` TypeScript union. A string
+identifies the original shortcut being edited, while `null` represents Add
+mode. The save operation captures that value before its first asynchronous
+storage call so the intended operation remains stable while it awaits Chrome.
+
+Snippet collections continue to use `[string, string]` tuples. Explicit tuple
+return types keep edited entries as fixed shortcut/replacement pairs when
+mapping the collection, rather than allowing TypeScript to infer less precise
+string arrays.
+
+Before updating, TypeGremlin reloads and validates storage, confirms that the
+original entry still exists, and rejects case-insensitive collisions with every
+other shortcut. Renaming replaces the original key in its existing position
+rather than leaving a duplicate entry behind. Failed updates preserve both the
+stored collection and the user's form values.
+
+Canceling restores Add mode and returns focus to the Edit button that opened
+the form when that button still exists. Deleting the snippet currently being
+edited exits Edit mode safely. Rendering refreshes the stored focus reference
+when list buttons are recreated.
+
+During asynchronous saves and deletions, the snippet list is temporarily
+`inert` and relevant form actions are disabled. This prevents competing storage
+operations from reading the same older collection and overwriting one another.
+A `finally` block restores interaction after success, failure, or an early
+duplicate return.
+
+Manual Chrome and keyboard testing covered entering and canceling Edit mode,
+replacement updates, shortcut renaming, duplicate rejection, immediate changes
+on an already-open page, deletion during editing, focus movement, and recovery
+to Add mode. No new permission or dependency was required.
