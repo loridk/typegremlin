@@ -215,3 +215,24 @@ The migration was verified with the TypeScript checker and compiler. Manual
 Chrome testing confirmed that standard input and textarea expansion, native
 undo behavior, and sensitive password-field blocking continue to work after
 Chrome was updated to load the compiled files.
+
+### Accessible Snippet Settings View
+
+Added TypeGremlin's first settings page as a read-only view of the snippets
+stored on the current device. Chrome opens the page in its own tab through the
+manifest's `options_page` field. No additional Chrome permission was required.
+
+The initial interface uses semantic HTML without styling. A heading hierarchy
+provides a clear page structure, and a description list represents each
+shortcut and replacement as a related pair. An always-present `role="status"`
+message communicates loading, empty, success, and failure states.
+
+The settings script validates data read from Chrome storage before displaying
+it. Shortcut and replacement values are inserted with `textContent`, so stored
+HTML-like content remains plain text rather than being interpreted as markup or
+script.
+
+The page was manually verified in Chrome with the two development snippets. It
+reported two saved snippets and displayed both shortcut/replacement pairs. The
+interface is intentionally read-only at this stage; adding, editing, and
+deleting snippets remain separate future milestones.

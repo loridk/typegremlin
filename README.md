@@ -9,6 +9,7 @@ The proof of concept currently:
 
 - expands snippets in standard text inputs and textareas;
 - stores snippet data locally with `chrome.storage.local`;
+- provides a read-only settings page for viewing saved snippets;
 - avoids expansion in fields identified as password fields;
 - preserves Chrome's native undo behavior for tested standard fields; and
 - requests only Chrome's `storage` permission.
@@ -18,8 +19,8 @@ Chrome runs the generated JavaScript in `dist/`; no framework or bundler is
 currently required.
 
 Support for `contenteditable` and rich-text editors is planned but is not yet
-implemented. The included snippets are development examples, not a settings
-interface.
+implemented. The included snippets are development examples, and the current
+settings page does not yet provide controls for adding or editing them.
 
 ## Local development
 
