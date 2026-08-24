@@ -9,7 +9,53 @@
     <main>
       <h1>TypeGremlin Settings</h1>
 
-      <p>View the text shortcuts currently stored on this device.</p>
+      <p>Create and view text shortcuts stored on this device.</p>
+
+      <section aria-labelledby="add-snippet-heading">
+        <h2 id="add-snippet-heading">Add a snippet</h2>
+
+        <form id="snippet-form">
+          <div>
+            <label for="shortcut">Shortcut</label>
+
+            <p id="shortcut-help">Enter 1–50 characters without spaces.</p>
+
+            <input
+              id="shortcut"
+              name="shortcut"
+              type="text"
+              required
+              maxlength="50"
+              autocomplete="off"
+              autocapitalize="none"
+              spellcheck="false"
+              aria-describedby="shortcut-help"
+            />
+          </div>
+
+          <div>
+            <label for="replacement">Replacement</label>
+
+            <p id="replacement-help">
+              Enter up to 5,000 characters. Line breaks are allowed.
+            </p>
+
+            <textarea
+              id="replacement"
+              name="replacement"
+              required
+              maxlength="5000"
+              rows="6"
+              autocomplete="off"
+              aria-describedby="replacement-help"
+            ></textarea>
+          </div>
+
+          <button type="submit">Add snippet</button>
+        </form>
+
+        <p id="form-status" role="status"></p>
+      </section>
 
       <section aria-labelledby="snippets-heading">
         <h2 id="snippets-heading">Saved snippets</h2>

@@ -236,3 +236,32 @@ The page was manually verified in Chrome with the two development snippets. It
 reported two saved snippets and displayed both shortcut/replacement pairs. The
 interface is intentionally read-only at this stage; adding, editing, and
 deleting snippets remain separate future milestones.
+
+### Accessible Snippet Creation
+
+Added a semantic form to the settings page for creating locally stored
+snippets. The form uses associated labels, visible instructions, native
+`required` and `maxlength` constraints, a native submit button, and an
+always-present status region.
+
+Shortcuts are limited to 50 characters, trimmed at their outer edges, and
+rejected if they are empty or contain whitespace. Replacements are limited to
+5,000 characters and rejected if they contain only whitespace. Valid
+replacement text is preserved exactly, including intentional surrounding
+spaces and line breaks.
+
+Duplicate shortcuts are detected case-insensitively so visually similar rules
+such as `;email` and `;EMAIL` cannot coexist. Before saving, TypeGremlin reloads
+and validates the current storage value. Malformed stored data is treated as an
+error and is not silently overwritten.
+
+After a successful save, the form resets, the saved-snippet list and count are
+updated, a success message is announced, and keyboard focus returns to the
+shortcut field. Failed saves preserve the user's entered values. Existing
+content scripts receive the storage change, allowing a newly created shortcut
+to work on an already-open page without another refresh.
+
+Manual testing covered valid creation, immediate expansion, case-insensitive
+duplicate rejection, whitespace validation, status messages, focus behavior,
+and keyboard-only submission. The feature required no additional Chrome
+permission or dependency.
