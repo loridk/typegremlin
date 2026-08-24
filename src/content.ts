@@ -1,22 +1,46 @@
 type SnippetCollection = Record<string, string>;
 let snippets: SnippetCollection = {};
+const CONTENT_MAX_SHORTCUT_LENGTH = 50;
+const CONTENT_MAX_REPLACEMENT_LENGTH = 5_000;
 
 function getSnippetCollection(value: unknown): SnippetCollection {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     return {};
   }
 
-  const validSnippets: SnippetCollection = {};
+  const prototype = Object.getPrototypeOf(value);
+
+  if (prototype !== Object.prototype && prototype !== null) {
+    return {};
+  }
+
+  const validEntries: Array<[string, string]> = [];
+  const normalizedShortcuts = new Set<string>();
 
   for (const [shortcut, replacement] of Object.entries(value)) {
-    if (shortcut.length === 0 || typeof replacement !== "string") {
+    if (
+      shortcut.length === 0 ||
+      shortcut.length > CONTENT_MAX_SHORTCUT_LENGTH ||
+      /\s/.test(shortcut) ||
+      typeof replacement !== "string" ||
+      replacement.length === 0 ||
+      replacement.length > CONTENT_MAX_REPLACEMENT_LENGTH ||
+      replacement.trim().length === 0
+    ) {
       return {};
     }
 
-    validSnippets[shortcut] = replacement;
+    const normalizedShortcut = shortcut.toLowerCase();
+
+    if (normalizedShortcuts.has(normalizedShortcut)) {
+      return {};
+    }
+
+    normalizedShortcuts.add(normalizedShortcut);
+    validEntries.push([shortcut, replacement]);
   }
 
-  return validSnippets;
+  return Object.fromEntries(validEntries);
 }
 
 async function loadSnippets() {

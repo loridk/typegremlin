@@ -366,3 +366,51 @@ information.
 
 Export uses normal browser download behavior and requires no `downloads`
 permission, network request, account, server, or additional dependency.
+
+### Secure JSON Snippet Import
+
+Added settings-page restore controls for reviewing and importing a TypeGremlin
+JSON backup. Import uses a replace-only policy for the initial version: users
+are warned that the current collection will be replaced, encouraged to export
+it first, and shown current/imported snippet counts before any write occurs.
+
+Selected files are limited to 12 MB before their contents are read. The native
+file input's accepted file types are treated only as a picker hint; file
+contents remain untrusted. Parsed JSON is assigned to TypeScript's `unknown`
+type so it cannot be used without runtime checks.
+
+An `isPlainRecord()` type predicate rejects primitives, arrays, `null`, and
+objects with unexpected prototypes. The backup parser requires exactly the
+four documented top-level fields, the fixed format identifier, schema version
+`1`, a round-trippable ISO timestamp, and a plain snippet object. Shortcut and
+replacement limits, whitespace rules, and case-insensitive uniqueness are
+validated for every entry.
+
+Rather than asserting that parsed data is safe, the parser creates a new typed
+`SnippetBackup` from validated values. Snippet objects are built with
+`Object.fromEntries()` instead of untrusted bracket assignment, preventing
+special keys such as `__proto__` from invoking legacy prototype behavior. The
+content script's independent storage validator received the same structural,
+length, whitespace, uniqueness, and safe-construction protections.
+
+Reviewing a file stores a sanitized pending backup plus a serialized snapshot
+of the current collection. Confirmation reloads and validates storage and
+requires that snapshot to match. If snippets changed after review, import stops,
+clears stale state, refreshes the visible list, and requires another review.
+
+All settings-page storage operations now use a shared busy-state function.
+Add, Edit, Delete, Export, import review, and import confirmation temporarily
+disable competing controls and make the snippet list `inert`. `finally` blocks
+restore interaction on successful, failed, and early-return paths.
+
+Successful import replaces the collection only after Chrome accepts the full
+storage write, exits stale Edit state, refreshes the list, resets the file and
+confirmation controls, announces the result, and updates already-open content
+scripts through the existing storage listener. Cancellation and all validation
+failures leave stored snippets unchanged.
+
+Manual testing covered valid review, cancellation, confirmed replacement,
+plain-text rendering of HTML-like content, multiline replacement text,
+immediate expansion updates, restoration from an untouched export, invalid
+schema rejection, and stale-confirmation rejection across two Settings tabs.
+No new permission, network request, account, server, or dependency was added.

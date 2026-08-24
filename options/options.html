@@ -72,11 +72,48 @@
       <section aria-labelledby="backup-heading">
         <h2 id="backup-heading">Backup and restore</h2>
 
-        <p>
-          Download a portable JSON backup of the snippets stored on this device.
-        </p>
+        <section aria-labelledby="export-heading">
+          <h3 id="export-heading">Export snippets</h3>
 
-        <button id="export-snippets" type="button">Export snippets</button>
+          <p>
+            Download a portable JSON backup of the snippets stored on this
+            device.
+          </p>
+
+          <button id="export-snippets" type="button">Export snippets</button>
+        </section>
+
+        <section aria-labelledby="import-heading">
+          <h3 id="import-heading">Import snippets</h3>
+
+          <p>
+            Importing a backup will replace every snippet currently stored on
+            this device. Export the current collection first if you may want to
+            restore it later.
+          </p>
+
+          <form id="import-form">
+            <label for="import-file">Backup file</label>
+
+            <input
+              id="import-file"
+              name="import-file"
+              type="file"
+              accept=".json,application/json"
+              required
+            />
+
+            <button id="review-import" type="submit">Review backup</button>
+          </form>
+
+          <div id="import-confirmation" hidden>
+            <p id="import-summary"></p>
+
+            <button id="confirm-import" type="button">Confirm import</button>
+
+            <button id="cancel-import" type="button">Cancel</button>
+          </div>
+        </section>
 
         <p id="backup-status" role="status" tabindex="-1"></p>
       </section>

@@ -1,8 +1,19 @@
+const BACKUP_FORMAT = "typegremlin-snippets" as const;
+const BACKUP_VERSION = 1 as const;
+const MAX_IMPORT_FILE_BYTES = 12 * 1024 * 1024;
+const MAX_SHORTCUT_LENGTH = 50;
+const MAX_REPLACEMENT_LENGTH = 5_000;
+
 interface SnippetBackup {
-  format: "typegremlin-snippets";
-  version: 1;
+  format: typeof BACKUP_FORMAT;
+  version: typeof BACKUP_VERSION;
   exportedAt: string;
   snippets: Record<string, string>;
+}
+
+interface PendingImport {
+  backup: SnippetBackup;
+  reviewedCurrentSnippets: string;
 }
 
 function getValidSnippetEntries(
@@ -12,17 +23,33 @@ function getValidSnippetEntries(
     return [];
   }
 
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+  if (!isPlainRecord(value)) {
     return null;
   }
 
   const validEntries: Array<[string, string]> = [];
+  const normalizedShortcuts = new Set<string>();
 
   for (const [shortcut, replacement] of Object.entries(value)) {
-    if (shortcut.length === 0 || typeof replacement !== "string") {
+    if (
+      shortcut.length === 0 ||
+      shortcut.length > MAX_SHORTCUT_LENGTH ||
+      /\s/.test(shortcut) ||
+      typeof replacement !== "string" ||
+      replacement.length === 0 ||
+      replacement.length > MAX_REPLACEMENT_LENGTH ||
+      replacement.trim().length === 0
+    ) {
       return null;
     }
 
+    const normalizedShortcut = shortcut.toLowerCase();
+
+    if (normalizedShortcuts.has(normalizedShortcut)) {
+      return null;
+    }
+
+    normalizedShortcuts.add(normalizedShortcut);
     validEntries.push([shortcut, replacement]);
   }
 
@@ -33,10 +60,85 @@ function createSnippetBackup(
   snippetEntries: Array<[string, string]>,
 ): SnippetBackup {
   return {
-    format: "typegremlin-snippets",
-    version: 1,
+    format: BACKUP_FORMAT,
+    version: BACKUP_VERSION,
     exportedAt: new Date().toISOString(),
     snippets: Object.fromEntries(snippetEntries),
+  };
+}
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return false;
+  }
+
+  const prototype = Object.getPrototypeOf(value);
+
+  return prototype === Object.prototype || prototype === null;
+}
+
+function parseSnippetBackup(value: unknown): SnippetBackup | null {
+  if (!isPlainRecord(value)) {
+    return null;
+  }
+
+  const expectedKeys = ["exportedAt", "format", "snippets", "version"];
+  const actualKeys = Object.keys(value).sort();
+
+  const hasExpectedKeys =
+    actualKeys.length === expectedKeys.length &&
+    expectedKeys.every((key, index) => actualKeys[index] === key);
+
+  if (
+    !hasExpectedKeys ||
+    value.format !== BACKUP_FORMAT ||
+    value.version !== BACKUP_VERSION ||
+    typeof value.exportedAt !== "string" ||
+    !isPlainRecord(value.snippets)
+  ) {
+    return null;
+  }
+
+  const exportedDate = new Date(value.exportedAt);
+
+  if (
+    Number.isNaN(exportedDate.getTime()) ||
+    exportedDate.toISOString() !== value.exportedAt
+  ) {
+    return null;
+  }
+
+  const validEntries: Array<[string, string]> = [];
+  const normalizedShortcuts = new Set<string>();
+
+  for (const [shortcut, replacement] of Object.entries(value.snippets)) {
+    if (
+      shortcut.length === 0 ||
+      shortcut.length > MAX_SHORTCUT_LENGTH ||
+      /\s/.test(shortcut) ||
+      typeof replacement !== "string" ||
+      replacement.length === 0 ||
+      replacement.length > MAX_REPLACEMENT_LENGTH ||
+      replacement.trim().length === 0
+    ) {
+      return null;
+    }
+
+    const normalizedShortcut = shortcut.toLowerCase();
+
+    if (normalizedShortcuts.has(normalizedShortcut)) {
+      return null;
+    }
+
+    normalizedShortcuts.add(normalizedShortcut);
+    validEntries.push([shortcut, replacement]);
+  }
+
+  return {
+    format: BACKUP_FORMAT,
+    version: BACKUP_VERSION,
+    exportedAt: value.exportedAt,
+    snippets: Object.fromEntries(validEntries),
   };
 }
 
@@ -60,6 +162,20 @@ const snippetActionStatus = document.querySelector<HTMLParagraphElement>(
 );
 const exportSnippetsButton =
   document.querySelector<HTMLButtonElement>("#export-snippets");
+const importForm = document.querySelector<HTMLFormElement>("#import-form");
+const importFileInput =
+  document.querySelector<HTMLInputElement>("#import-file");
+const reviewImportButton =
+  document.querySelector<HTMLButtonElement>("#review-import");
+const importConfirmation = document.querySelector<HTMLDivElement>(
+  "#import-confirmation",
+);
+const importSummary =
+  document.querySelector<HTMLParagraphElement>("#import-summary");
+const confirmImportButton =
+  document.querySelector<HTMLButtonElement>("#confirm-import");
+const cancelImportButton =
+  document.querySelector<HTMLButtonElement>("#cancel-import");
 const backupStatus =
   document.querySelector<HTMLParagraphElement>("#backup-status");
 
@@ -75,6 +191,13 @@ if (
   !snippetStatus ||
   !snippetActionStatus ||
   !exportSnippetsButton ||
+  !importForm ||
+  !importFileInput ||
+  !reviewImportButton ||
+  !importConfirmation ||
+  !importSummary ||
+  !confirmImportButton ||
+  !cancelImportButton ||
   !backupStatus
 ) {
   throw new Error("The snippet settings interface could not be initialized.");
@@ -91,8 +214,27 @@ const snippetListElement = snippetList;
 const snippetStatusElement = snippetStatus;
 const snippetActionStatusElement = snippetActionStatus;
 const exportSnippetsButtonElement = exportSnippetsButton;
+const importFormElement = importForm;
+const importFileInputElement = importFileInput;
+const reviewImportButtonElement = reviewImportButton;
+const importConfirmationElement = importConfirmation;
+const importSummaryElement = importSummary;
+const confirmImportButtonElement = confirmImportButton;
+const cancelImportButtonElement = cancelImportButton;
 const backupStatusElement = backupStatus;
 
+function setStorageControlsBusy(isBusy: boolean): void {
+  submitButtonElement.disabled = isBusy;
+  cancelEditButtonElement.disabled = isBusy;
+  snippetListElement.inert = isBusy;
+  exportSnippetsButtonElement.disabled = isBusy;
+  importFileInputElement.disabled = isBusy;
+  reviewImportButtonElement.disabled = isBusy;
+  confirmImportButtonElement.disabled = isBusy;
+  cancelImportButtonElement.disabled = isBusy;
+}
+
+let pendingImport: PendingImport | null = null;
 let editingShortcut: string | null = null;
 let editReturnFocus: HTMLButtonElement | null = null;
 
@@ -285,9 +427,7 @@ function showDeleteConfirmation(
 }
 
 async function deleteSnippet(shortcut: string): Promise<void> {
-  submitButtonElement.disabled = true;
-  cancelEditButtonElement.disabled = true;
-  snippetListElement.inert = true;
+  setStorageControlsBusy(true);
 
   try {
     const { snippets: storedSnippets } =
@@ -336,9 +476,7 @@ async function deleteSnippet(shortcut: string): Promise<void> {
       "TypeGremlin could not delete the snippet. Existing snippets were not changed.";
     snippetActionStatusElement.focus();
   } finally {
-    submitButtonElement.disabled = false;
-    cancelEditButtonElement.disabled = false;
-    snippetListElement.inert = false;
+    setStorageControlsBusy(false);
   }
 }
 
@@ -380,9 +518,7 @@ async function saveSnippet(): Promise<void> {
 
   const originalShortcut = editingShortcut;
 
-  submitButtonElement.disabled = true;
-  cancelEditButtonElement.disabled = true;
-  snippetListElement.inert = true;
+  setStorageControlsBusy(true);
 
   try {
     const { snippets: storedSnippets } =
@@ -461,15 +597,13 @@ async function saveSnippet(): Promise<void> {
 
     formStatusElement.focus();
   } finally {
-    submitButtonElement.disabled = false;
-    cancelEditButtonElement.disabled = false;
-    snippetListElement.inert = false;
+    setStorageControlsBusy(false);
   }
 }
 
 async function exportSnippets(): Promise<void> {
   backupStatusElement.textContent = "";
-  exportSnippetsButtonElement.disabled = true;
+  setStorageControlsBusy(true);
 
   try {
     const { snippets: storedSnippets } =
@@ -514,9 +648,193 @@ async function exportSnippets(): Promise<void> {
 
     backupStatusElement.focus();
   } finally {
-    exportSnippetsButtonElement.disabled = false;
+    setStorageControlsBusy(false);
   }
 }
+
+async function reviewImportFile(): Promise<void> {
+  pendingImport = null;
+  importConfirmationElement.hidden = true;
+  importSummaryElement.textContent = "";
+  backupStatusElement.textContent = "";
+
+  const selectedFiles = importFileInputElement.files;
+
+  if (!selectedFiles || selectedFiles.length !== 1) {
+    importFileInputElement.setCustomValidity(
+      "Choose one TypeGremlin backup file.",
+    );
+    importFileInputElement.reportValidity();
+    importFileInputElement.focus();
+    return;
+  }
+
+  const selectedFile = selectedFiles[0];
+
+  if (selectedFile.size === 0 || selectedFile.size > MAX_IMPORT_FILE_BYTES) {
+    backupStatusElement.textContent =
+      "Choose a non-empty TypeGremlin backup no larger than 12 MB.";
+    backupStatusElement.focus();
+    return;
+  }
+
+  let shouldFocusConfirm = false;
+
+  setStorageControlsBusy(true);
+
+  try {
+    const fileText = await selectedFile.text();
+    const parsedValue: unknown = JSON.parse(fileText);
+    const parsedBackup = parseSnippetBackup(parsedValue);
+
+    if (parsedBackup === null) {
+      throw new Error(
+        "The selected file is not a valid TypeGremlin version 1 backup.",
+      );
+    }
+
+    const { snippets: storedSnippets } =
+      await chrome.storage.local.get("snippets");
+
+    const currentEntries = getValidSnippetEntries(storedSnippets);
+
+    if (currentEntries === null) {
+      throw new Error("Stored snippet data is invalid.");
+    }
+
+    const importedCount = Object.keys(parsedBackup.snippets).length;
+    const currentCount = currentEntries.length;
+
+    pendingImport = {
+      backup: parsedBackup,
+      reviewedCurrentSnippets: JSON.stringify(
+        Object.fromEntries(currentEntries),
+      ),
+    };
+
+    importSummaryElement.textContent = `Replace ${currentCount} current ${
+      currentCount === 1 ? "snippet" : "snippets"
+    } with ${importedCount} imported ${
+      importedCount === 1 ? "snippet" : "snippets"
+    }?`;
+
+    importConfirmationElement.hidden = false;
+
+    backupStatusElement.textContent =
+      "The backup is valid. Confirm or cancel the import.";
+
+    shouldFocusConfirm = true;
+  } catch (error: unknown) {
+    console.error("TypeGremlin could not review the backup:", error);
+
+    pendingImport = null;
+    importConfirmationElement.hidden = true;
+    importSummaryElement.textContent = "";
+
+    backupStatusElement.textContent =
+      "TypeGremlin could not review this file. Choose a valid TypeGremlin version 1 JSON backup no larger than 12 MB.";
+
+    backupStatusElement.focus();
+  } finally {
+    setStorageControlsBusy(false);
+  }
+
+  if (shouldFocusConfirm) {
+    confirmImportButtonElement.focus();
+  }
+}
+
+function clearPendingImportReview(): void {
+  pendingImport = null;
+  importConfirmationElement.hidden = true;
+  importSummaryElement.textContent = "";
+}
+
+function cancelImport(): void {
+  clearPendingImportReview();
+  importFormElement.reset();
+  importFileInputElement.setCustomValidity("");
+
+  backupStatusElement.textContent =
+    "Import canceled. Stored snippets were not changed.";
+
+  importFileInputElement.focus();
+}
+
+async function confirmImport(): Promise<void> {
+  backupStatusElement.textContent = "";
+
+  const importToConfirm = pendingImport;
+
+  if (importToConfirm === null) {
+    backupStatusElement.textContent =
+      "Review a valid backup before confirming import.";
+    backupStatusElement.focus();
+    return;
+  }
+
+  setStorageControlsBusy(true);
+
+  try {
+    const validatedBackup = parseSnippetBackup(importToConfirm.backup);
+
+    if (validatedBackup === null) {
+      throw new Error("The pending backup is no longer valid.");
+    }
+
+    const { snippets: storedSnippets } =
+      await chrome.storage.local.get("snippets");
+
+    const currentEntries = getValidSnippetEntries(storedSnippets);
+
+    if (currentEntries === null) {
+      throw new Error("Stored snippet data is invalid.");
+    }
+
+    const currentSnapshot = JSON.stringify(Object.fromEntries(currentEntries));
+
+    if (currentSnapshot !== importToConfirm.reviewedCurrentSnippets) {
+      clearPendingImportReview();
+      importFormElement.reset();
+      resetSnippetForm();
+      renderSnippetEntries(currentEntries);
+
+      backupStatusElement.textContent =
+        "Stored snippets changed after this backup was reviewed. Review the backup again before importing.";
+
+      backupStatusElement.focus();
+      return;
+    }
+
+    const importedEntries = Object.entries(validatedBackup.snippets);
+
+    await chrome.storage.local.set({
+      snippets: validatedBackup.snippets,
+    });
+
+    resetSnippetForm();
+    renderSnippetEntries(importedEntries);
+    clearPendingImportReview();
+    importFormElement.reset();
+
+    backupStatusElement.textContent = `Imported ${importedEntries.length} ${
+      importedEntries.length === 1 ? "snippet" : "snippets"
+    }. Previous snippets were replaced.`;
+
+    backupStatusElement.focus();
+  } catch (error: unknown) {
+    console.error("TypeGremlin could not import snippets:", error);
+
+    backupStatusElement.textContent =
+      "TypeGremlin could not import the backup. Existing snippets were not changed.";
+
+    backupStatusElement.focus();
+  } finally {
+    setStorageControlsBusy(false);
+  }
+}
+
+// Event Listeners
 
 snippetFormElement.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -525,6 +843,23 @@ snippetFormElement.addEventListener("submit", (event) => {
 
 exportSnippetsButtonElement.addEventListener("click", () => {
   void exportSnippets();
+});
+
+importFormElement.addEventListener("submit", (event) => {
+  event.preventDefault();
+  void reviewImportFile();
+});
+
+confirmImportButtonElement.addEventListener("click", () => {
+  void confirmImport();
+});
+
+cancelImportButtonElement.addEventListener("click", cancelImport);
+
+importFileInputElement.addEventListener("change", () => {
+  importFileInputElement.setCustomValidity("");
+  clearPendingImportReview();
+  backupStatusElement.textContent = "";
 });
 
 void displaySnippets();
