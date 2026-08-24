@@ -1,3 +1,10 @@
+interface SnippetBackup {
+  format: "typegremlin-snippets";
+  version: 1;
+  exportedAt: string;
+  snippets: Record<string, string>;
+}
+
 function getValidSnippetEntries(
   value: unknown,
 ): Array<[string, string]> | null {
@@ -22,6 +29,17 @@ function getValidSnippetEntries(
   return validEntries;
 }
 
+function createSnippetBackup(
+  snippetEntries: Array<[string, string]>,
+): SnippetBackup {
+  return {
+    format: "typegremlin-snippets",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    snippets: Object.fromEntries(snippetEntries),
+  };
+}
+
 const formHeading = document.querySelector<HTMLHeadingElement>(
   "#add-snippet-heading",
 );
@@ -40,6 +58,10 @@ const snippetStatus =
 const snippetActionStatus = document.querySelector<HTMLParagraphElement>(
   "#snippet-action-status",
 );
+const exportSnippetsButton =
+  document.querySelector<HTMLButtonElement>("#export-snippets");
+const backupStatus =
+  document.querySelector<HTMLParagraphElement>("#backup-status");
 
 if (
   !formHeading ||
@@ -51,7 +73,9 @@ if (
   !formStatus ||
   !snippetList ||
   !snippetStatus ||
-  !snippetActionStatus
+  !snippetActionStatus ||
+  !exportSnippetsButton ||
+  !backupStatus
 ) {
   throw new Error("The snippet settings interface could not be initialized.");
 }
@@ -66,6 +90,8 @@ const formStatusElement = formStatus;
 const snippetListElement = snippetList;
 const snippetStatusElement = snippetStatus;
 const snippetActionStatusElement = snippetActionStatus;
+const exportSnippetsButtonElement = exportSnippetsButton;
+const backupStatusElement = backupStatus;
 
 let editingShortcut: string | null = null;
 let editReturnFocus: HTMLButtonElement | null = null;
@@ -441,9 +467,64 @@ async function saveSnippet(): Promise<void> {
   }
 }
 
+async function exportSnippets(): Promise<void> {
+  backupStatusElement.textContent = "";
+  exportSnippetsButtonElement.disabled = true;
+
+  try {
+    const { snippets: storedSnippets } =
+      await chrome.storage.local.get("snippets");
+
+    const snippetEntries = getValidSnippetEntries(storedSnippets);
+
+    if (snippetEntries === null) {
+      throw new Error("Stored snippet data is invalid.");
+    }
+
+    const backup = createSnippetBackup(snippetEntries);
+    const backupJson = `${JSON.stringify(backup, null, 2)}\n`;
+    const backupBlob = new Blob([backupJson], { type: "application/json" });
+    const backupUrl = URL.createObjectURL(backupBlob);
+    const downloadLink = document.createElement("a");
+
+    try {
+      downloadLink.href = backupUrl;
+      downloadLink.download = `typegremlin-snippets-${backup.exportedAt.slice(
+        0,
+        10,
+      )}.json`;
+
+      document.body.append(downloadLink);
+      downloadLink.click();
+      downloadLink.remove();
+    } finally {
+      URL.revokeObjectURL(backupUrl);
+    }
+
+    backupStatusElement.textContent = `Exported ${snippetEntries.length} ${
+      snippetEntries.length === 1 ? "snippet" : "snippets"
+    }.`;
+
+    backupStatusElement.focus();
+  } catch (error: unknown) {
+    console.error("TypeGremlin could not export snippets:", error);
+
+    backupStatusElement.textContent =
+      "TypeGremlin could not export the snippets. Stored snippets were not changed.";
+
+    backupStatusElement.focus();
+  } finally {
+    exportSnippetsButtonElement.disabled = false;
+  }
+}
+
 snippetFormElement.addEventListener("submit", (event) => {
   event.preventDefault();
   void saveSnippet();
+});
+
+exportSnippetsButtonElement.addEventListener("click", () => {
+  void exportSnippets();
 });
 
 void displaySnippets();

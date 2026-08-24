@@ -333,3 +333,36 @@ Manual Chrome and keyboard testing covered entering and canceling Edit mode,
 replacement updates, shortcut renaming, duplicate rejection, immediate changes
 on an already-open page, deletion during editing, focus movement, and recovery
 to Add mode. No new permission or dependency was required.
+
+### Portable JSON Snippet Export
+
+Added a settings-page control for downloading a portable backup of the snippets
+stored on the current device. Export reloads and validates the latest storage
+value before creating a file and refuses to export malformed data.
+
+The backup uses a documented, versioned JSON shape containing a fixed
+`typegremlin-snippets` format identifier, schema version `1`, an ISO 8601 export
+timestamp, and the plain-text shortcut/replacement collection. It does not
+include browser history, device identifiers, analytics, or unrelated extension
+data.
+
+TypeScript represents the backup with a `SnippetBackup` interface. Literal
+types require the exact format identifier and schema version during development,
+while the snippet collection remains a `Record<string, string>`. These
+compile-time guarantees describe TypeGremlin's own output; future imports will
+still require runtime validation because external JSON is untrusted.
+
+The extension serializes the typed object with readable, indented JSON and
+creates an in-memory `Blob`. A temporary object URL and local anchor with the
+native `download` attribute trigger the browser download. Nested `try` and
+`finally` blocks revoke the object URL and restore the Export button even if an
+operation fails.
+
+The exported filename includes the UTC calendar date, and an accessible status
+region reports the number of snippets exported and receives focus after success
+or failure. The downloaded file was manually verified for its filename,
+metadata, snippet contents, valid JSON structure, and absence of unrelated
+information.
+
+Export uses normal browser download behavior and requires no `downloads`
+permission, network request, account, server, or additional dependency.
