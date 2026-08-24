@@ -30,6 +30,9 @@ const formStatus = document.querySelector<HTMLParagraphElement>("#form-status");
 const snippetList = document.querySelector<HTMLDListElement>("#snippet-list");
 const snippetStatus =
   document.querySelector<HTMLParagraphElement>("#snippet-status");
+const snippetActionStatus = document.querySelector<HTMLParagraphElement>(
+  "#snippet-action-status",
+);
 
 if (
   !snippetForm ||
@@ -37,7 +40,8 @@ if (
   !replacementInput ||
   !formStatus ||
   !snippetList ||
-  !snippetStatus
+  !snippetStatus ||
+  !snippetActionStatus
 ) {
   throw new Error("The snippet settings interface could not be initialized.");
 }
@@ -48,6 +52,7 @@ const replacementInputElement = replacementInput;
 const formStatusElement = formStatus;
 const snippetListElement = snippetList;
 const snippetStatusElement = snippetStatus;
+const snippetActionStatusElement = snippetActionStatus;
 
 function getValidatedShortcut(): string | null {
   shortcutInputElement.setCustomValidity("");
@@ -91,6 +96,120 @@ replacementInputElement.addEventListener("input", () => {
   replacementInputElement.setCustomValidity("");
 });
 
+function renderSnippetEntries(snippetEntries: Array<[string, string]>): void {
+  snippetListElement.replaceChildren();
+
+  for (const [shortcut, replacement] of snippetEntries) {
+    const shortcutTerm = document.createElement("dt");
+    const shortcutCode = document.createElement("code");
+    const replacementDescription = document.createElement("dd");
+    const replacementText = document.createElement("p");
+    const deleteControls = document.createElement("div");
+    const deleteButton = document.createElement("button");
+
+    shortcutCode.textContent = shortcut;
+    replacementText.textContent = replacement;
+    deleteButton.type = "button";
+    deleteButton.textContent = `Delete ${shortcut}`;
+
+    deleteButton.addEventListener("click", () => {
+      showDeleteConfirmation(shortcut, deleteControls, deleteButton);
+    });
+
+    shortcutTerm.append(shortcutCode);
+    deleteControls.append(deleteButton);
+    replacementDescription.append(replacementText, deleteControls);
+    snippetListElement.append(shortcutTerm, replacementDescription);
+  }
+
+  snippetStatusElement.textContent =
+    snippetEntries.length === 0
+      ? "No saved snippets."
+      : `${snippetEntries.length} saved ${
+          snippetEntries.length === 1 ? "snippet" : "snippets"
+        }.`;
+}
+
+function showDeleteConfirmation(
+  shortcut: string,
+  deleteControls: HTMLDivElement,
+  deleteButton: HTMLButtonElement,
+): void {
+  snippetActionStatusElement.textContent = "";
+
+  const confirmationText = document.createElement("p");
+  const confirmButton = document.createElement("button");
+  const cancelButton = document.createElement("button");
+
+  confirmationText.textContent = `Delete ${shortcut}?`;
+
+  confirmButton.type = "button";
+  confirmButton.textContent = `Confirm delete ${shortcut}`;
+
+  cancelButton.type = "button";
+  cancelButton.textContent = "Cancel";
+
+  confirmButton.addEventListener("click", () => {
+    confirmButton.disabled = true;
+    cancelButton.disabled = true;
+    void deleteSnippet(shortcut);
+  });
+
+  cancelButton.addEventListener("click", () => {
+    deleteControls.replaceChildren(deleteButton);
+    snippetActionStatusElement.textContent = `Deletion of ${shortcut} canceled.`;
+    deleteButton.focus();
+  });
+
+  deleteControls.replaceChildren(confirmationText, confirmButton, cancelButton);
+
+  confirmButton.focus();
+}
+
+async function deleteSnippet(shortcut: string): Promise<void> {
+  try {
+    const { snippets: storedSnippets } =
+      await chrome.storage.local.get("snippets");
+
+    const snippetEntries = getValidSnippetEntries(storedSnippets);
+
+    if (snippetEntries === null) {
+      throw new Error("Stored snippet data is invalid.");
+    }
+
+    const snippetStillExists = snippetEntries.some(
+      ([existingShortcut]) => existingShortcut === shortcut,
+    );
+
+    if (!snippetStillExists) {
+      throw new Error("The snippet no longer exists.");
+    }
+
+    const remainingEntries = snippetEntries.filter(
+      ([existingShortcut]) => existingShortcut !== shortcut,
+    );
+
+    const updatedSnippets = Object.fromEntries(remainingEntries);
+
+    await chrome.storage.local.set({
+      snippets: updatedSnippets,
+    });
+
+    renderSnippetEntries(remainingEntries);
+
+    snippetActionStatusElement.textContent = `Deleted ${shortcut}.`;
+    snippetActionStatusElement.focus();
+  } catch (error: unknown) {
+    console.error("TypeGremlin could not delete the snippet:", error);
+
+    await displaySnippets();
+
+    snippetActionStatusElement.textContent =
+      "TypeGremlin could not delete the snippet. Existing snippets were not changed.";
+    snippetActionStatusElement.focus();
+  }
+}
+
 async function displaySnippets(): Promise<void> {
   try {
     const { snippets: storedSnippets } =
@@ -102,26 +221,7 @@ async function displaySnippets(): Promise<void> {
       throw new Error("Stored snippet data is invalid.");
     }
 
-    snippetListElement.replaceChildren();
-
-    for (const [shortcut, replacement] of snippetEntries) {
-      const shortcutTerm = document.createElement("dt");
-      const shortcutCode = document.createElement("code");
-      const replacementDescription = document.createElement("dd");
-
-      shortcutCode.textContent = shortcut;
-      replacementDescription.textContent = replacement;
-
-      shortcutTerm.append(shortcutCode);
-      snippetListElement.append(shortcutTerm, replacementDescription);
-    }
-
-    snippetStatusElement.textContent =
-      snippetEntries.length === 0
-        ? "No saved snippets."
-        : `${snippetEntries.length} saved ${
-            snippetEntries.length === 1 ? "snippet" : "snippets"
-          }.`;
+    renderSnippetEntries(snippetEntries);
   } catch (error: unknown) {
     console.error("TypeGremlin could not load snippets:", error);
     snippetStatusElement.textContent =

@@ -265,3 +265,31 @@ Manual testing covered valid creation, immediate expansion, case-insensitive
 duplicate rejection, whitespace validation, status messages, focus behavior,
 and keyboard-only submission. The feature required no additional Chrome
 permission or dependency.
+
+### Accessible Snippet Deletion
+
+Added individual deletion controls to the saved-snippet list. Each button names
+the shortcut it affects, making the action clear visually and to screen-reader
+users.
+
+Deletion uses a two-step inline confirmation rather than immediately removing
+data or opening a custom modal. Selecting a delete button reveals clearly named
+Confirm and Cancel controls beside the affected snippet and moves keyboard
+focus to the confirmation action. Canceling restores the original button and
+returns focus to it.
+
+Before confirming a deletion, TypeGremlin reloads and validates the latest
+stored collection. It refuses to modify malformed data, verifies that the exact
+shortcut still exists, and removes only that entry. Deleting the final snippet
+would store a valid empty collection rather than causing development defaults
+to reappear.
+
+After a successful deletion, the list and saved count update, a dedicated
+status region announces the deleted shortcut, and focus moves to that status so
+it is not lost when the original button leaves the page. Existing content
+scripts receive the storage update immediately.
+
+Manual keyboard and Chrome testing covered opening and canceling confirmation,
+successful deletion, focus movement, count updates, removal from expansion on
+an already-open page, and continued operation of unaffected snippets. No new
+permission or dependency was added.
