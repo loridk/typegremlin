@@ -48,5 +48,6 @@ clipboard, downloads, or the network.
 
 ## Project notes
 
-See [BUILD_LOG.md](BUILD_LOG.md) for implementation decisions, test findings,
-and known tradeoffs.
+See [BUILD_LOG.md](BUILD_LOG.md) for implementation decisions and known
+tradeoffs. See [TESTING.md](TESTING.md) for the manual test matrix, current
+results, and remaining test coverage.

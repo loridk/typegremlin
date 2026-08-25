@@ -414,3 +414,39 @@ plain-text rendering of HTML-like content, multiline replacement text,
 immediate expansion updates, restoration from an untouched export, invalid
 schema rejection, and stale-confirmation rejection across two Settings tabs.
 No new permission, network request, account, server, or dependency was added.
+
+## August 24, 2026 — Formal Manual QA
+
+### Cross-Feature Test Matrix
+
+Added `TESTING.md` as a reusable manual test matrix for TypeGremlin's expansion,
+sensitive-field protection, settings CRUD, backup and restore, storage
+lifecycle, security, privacy, and accessibility behavior. The document uses
+explicit verified, failed, pending, and intentionally unsupported statuses so
+current evidence remains distinguishable from planned coverage.
+
+Manual Chrome testing verified native undo and redo, dynamically created
+fields, React-controlled inputs, ordinary text controls, and password-related
+autocomplete values containing one or multiple tokens. Settings tests covered
+deleting the final snippet and preserving a valid empty collection.
+
+Backup testing covered exporting zero snippets, restoring into an empty
+collection, and safely rejecting malformed JSON, zero-byte files, files larger
+than 12 MB, unsupported schema versions, unexpected top-level fields,
+out-of-range shortcut and replacement lengths, and case-insensitive shortcut
+collisions. Existing snippets remained unchanged after rejected imports.
+
+Security testing confirmed that a literal `__proto__` shortcut remains inert
+data through import, storage, rendering, and expansion. Fresh-install and
+uninstall testing confirmed that uninstalling removes local extension storage
+and reinstalling initializes the development defaults without duplicate data.
+
+Accessibility testing covered Windows Narrator announcements, keyboard focus,
+200% and 400% browser zoom, and Windows Contrast Themes. Controls and content
+remained readable, reachable, and usable during the tested flows.
+
+Two cases remain intentionally pending. A Chrome storage-quota failure is not
+being forced through unsafe or misleading test setup, and reduced-motion
+behavior will be tested after styling introduces any animation or transition.
+The current version also documents `contenteditable` and rich-text expansion as
+unsupported rather than reporting them as failures.
