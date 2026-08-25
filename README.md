@@ -12,7 +12,8 @@ The proof of concept currently:
 - provides a settings page for adding, viewing, editing, and deleting saved snippets;
 - imports and exports saved snippets as portable JSON backups;
 - avoids expansion in fields identified as password fields;
-- preserves Chrome's native undo behavior for tested standard fields; and
+- preserves Chrome's native undo behavior for tested standard fields;
+- opens Settings directly from its Chrome toolbar action; and
 - requests only Chrome's `storage` permission.
 
 TypeGremlin uses strict TypeScript with a minimal compiler-only build process.

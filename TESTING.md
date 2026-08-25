@@ -47,6 +47,13 @@ the test specifically verifies behavior without a refresh.
 | 🚫 | `contenteditable` | Type a shortcut in a `contenteditable` region. | No expansion occurs in the current version. |
 | 🚫 | Rich-text editor | Type in a Gmail-style rich-text editor. | No expansion is currently promised. |
 
+## Extension access
+
+| Status | Test | Action | Expected result |
+|---|---|---|---|
+| ✅ | Toolbar action | Click TypeGremlin's Chrome toolbar button. | TypeGremlin Settings opens. |
+| ✅ | Branded icon | Reload the unpacked extension and inspect Chrome's toolbar and extension card. | The TypeGremlin icon is visible and recognizable. |
+
 ## Sensitive-field protection
 
 | Status | Test | Action | Expected result |

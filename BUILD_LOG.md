@@ -478,3 +478,27 @@ A `prefers-reduced-motion` rule suppresses nonessential animation and transition
 timing. Windows Contrast Themes and reduced-motion preferences were manually
 retested after styling, and the interface remained readable, reachable, and
 usable.
+
+### Toolbar Settings Access and Working Icon
+
+Added a Chrome toolbar action that opens TypeGremlin Settings directly. The
+Manifest V3 service worker listens for `chrome.action.onClicked` and starts
+`chrome.runtime.openOptionsPage()` without introducing a popup or duplicating
+settings behavior. TypeScript's `void` operator explicitly marks the returned
+promise as intentionally started without waiting for it inside the synchronous
+click callback.
+
+The manifest supplies a descriptive toolbar title and continues to request only
+the existing `storage` permission. Manual testing confirmed that clicking the
+pinned TypeGremlin action opens Settings after rebuilding and reloading the
+unpacked extension.
+
+Added a working G-based TypeGremlin icon using the established plum, soft
+lavender, and muted green palette. A repository SVG remains the editable source,
+with locally generated 16, 32, 48, and 128 pixel PNG exports for Chrome's
+toolbar, extension-management interface, and future store packaging. The PNG
+dimensions and manifest JSON were validated before manual visual testing.
+
+The icon is intentionally treated as replaceable branding rather than a locked
+final identity. No remote asset, runtime dependency, permission, or network
+request was added.
