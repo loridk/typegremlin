@@ -143,10 +143,10 @@ The marquee image and video can wait until after the initial submission.
 
 ## Submission checklist
 
-- [ ] Bump `package.json` and `manifest.json` to the release version.
-- [ ] Run `npm run package` and inspect the final ZIP.
-- [ ] Load the versioned staging folder in a clean Chrome profile.
-- [ ] Complete the full `TESTING.md` smoke test against the packaged build.
+- [x] Bump `package.json` and `manifest.json` to the release version.
+- [x] Run `npm run package` and inspect the final ZIP.
+- [x] Load the versioned staging folder in a clean Chrome profile.
+- [x] Complete the full `TESTING.md` smoke test against the packaged build.
 - [ ] Upload and verify the required graphic assets.
 - [ ] Paste the product description and select Productivity.
 - [ ] Complete permission justifications and privacy-practice answers.

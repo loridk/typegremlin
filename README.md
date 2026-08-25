@@ -1,11 +1,11 @@
 # TypeGremlin
 
-TypeGremlin is an early-stage, privacy-first Chrome extension that expands
-short, user-defined shortcuts into longer plain-text snippets.
+TypeGremlin is a privacy-first Chrome extension that expands short, user-defined
+shortcuts into longer plain-text snippets.
 
 ## Current status
 
-The proof of concept currently:
+The initial 1.0.0 release:
 
 - expands snippets in standard text inputs and textareas;
 - stores snippet data locally with `chrome.storage.local`;

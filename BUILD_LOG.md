@@ -678,3 +678,25 @@ failed write, confirming that the collection was not partially replaced.
 
 The synthetic quota fixture was deleted after testing and is not part of the
 repository or release package. No `unlimitedStorage` permission was added.
+
+### Version 1.0.0 Release Candidate
+
+Promoted TypeGremlin's package, lockfile, and Manifest V3 metadata from 0.1.0 to
+1.0.0 after completing the functional, accessibility, security, privacy,
+compatibility, backup, packaging, and storage-quota test matrix. Updated the
+README to describe the project as an initial release rather than an early proof
+of concept.
+
+The dependency-free release workflow passed TypeScript checking and compilation,
+then created `release/typegremlin-1.0.0.zip`. Inspection confirmed matching
+1.0.0 versions in the package metadata, source manifest, and staged manifest;
+`manifest.json` at the ZIP root; all 12 required runtime files; and no TypeScript
+source, source maps, build scripts, documentation, dependencies, repository
+metadata, or store-listing assets.
+
+The exact versioned staging folder was loaded in a clean Chrome profile. Manual
+smoke testing confirmed the displayed 1.0.0 version, empty first-install state,
+snippet creation and expansion, undo and redo, sensitive-field protection,
+backup export and restore, toolbar access, Settings styling, favicon, and
+privacy-policy link. The tested release candidate is ready for the Chrome Web
+Store dashboard submission workflow.
