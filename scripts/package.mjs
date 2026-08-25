@@ -47,6 +47,7 @@ assertSafeReleaseTarget(archivePath);
 
 const runtimeFiles = [
   "manifest.json",
+  "favicon.png",
   "privacy.html",
   "dist/background.js",
   "dist/content.js",
@@ -112,7 +113,14 @@ for (const manifestRuntimePath of manifestRuntimePaths) {
   }
 }
 
-const archiveInputs = ["manifest.json", "privacy.html", "dist", "icons", "options"];
+const archiveInputs = [
+  "manifest.json",
+  "favicon.png",
+  "privacy.html",
+  "dist",
+  "icons",
+  "options",
+];
 
 const archiveResult = spawnSync(
   "tar",

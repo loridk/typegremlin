@@ -620,3 +620,15 @@ bug-reporting channel.
 The Chrome Web Store worksheet now records the verified public source and
 support URLs. The dedicated TypeGremlin website remains pending and is not
 treated as complete until its landing page is published and checked over HTTPS.
+
+### Website and Settings Favicons
+
+Added the existing 32px TypeGremlin G icon as the favicon for the extension
+Settings page and the standalone website pages. The website uses a root-level
+`favicon.png`, while Settings references the existing packaged
+`icons/icon32.png`; the two PNG files are byte-for-byte identical.
+
+Updated the dependency-free release allowlist so the root favicon is packaged
+beside `privacy.html`. This keeps the packaged privacy page's favicon reference
+complete while reusing the established icon and introducing no remote asset,
+permission, network request, script, or dependency.

@@ -54,6 +54,7 @@ the test specifically verifies behavior without a refresh.
 | ✅ | Toolbar action | Click TypeGremlin's Chrome toolbar button. | TypeGremlin Settings opens. |
 | ✅ | Branded icon | Reload the unpacked extension and inspect Chrome's toolbar and extension card. | The TypeGremlin icon is visible and recognizable. |
 | ✅ | Store icon spacing | Inspect the 128px icon at full size. | The selected G artwork is centered within transparent padding and remains crisp and recognizable. |
+| ✅ | Page favicons | Open Settings and the public website pages in browser tabs. | Each tab displays the TypeGremlin G icon, and every referenced favicon exists in its deployed or packaged location. |
 
 ## Release packaging
 
