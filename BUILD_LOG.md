@@ -547,6 +547,24 @@ by Git. The versioned staging folder remains available for unpacked testing so
 the exact packaged build can be checked before submission.
 
 Manual testing of the staged extension confirmed that the toolbar opens
-Settings, development defaults load, `;hello` expands, Settings styles load,
-and the published privacy-policy link opens correctly. The final ZIP was also
+Settings, the development defaults load, `;hello` expands, Settings styles
+load, and the published privacy-policy link opens correctly. This describes the
+package before the sample defaults were removed. The final ZIP was also
 inspected to confirm its expected root structure and runtime-only contents.
+
+### Empty First-Install Experience
+
+Removed the development-only `;email` and `;hello` sample snippets from fresh
+install initialization. A new installation now stores a valid empty snippet
+collection, giving users a clean starting point without placing fake content in
+their local extension data.
+
+The service worker still checks whether the `snippets` storage key is missing
+before writing anything. Reloading or updating TypeGremlin therefore preserves
+every existing collection, including an intentionally empty one. No permission,
+network request, account, server, or dependency was added.
+
+Manual Chrome testing confirmed that a fresh installation starts with zero
+saved snippets and no development samples. After adding a new snippet, expansion
+worked correctly and the packaged extension's toolbar action, Settings styles,
+and privacy-policy link continued to behave as expected.

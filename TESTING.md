@@ -63,7 +63,7 @@ the test specifically verifies behavior without a refresh.
 | ✅ | Manifest at ZIP root | Inspect the archive structure. | `manifest.json` is at the archive root rather than inside an extra parent folder. |
 | ✅ | Version agreement | Compare `package.json`, `manifest.json`, and the release filename. | All three use the same Chrome-compatible version. |
 | ✅ | Development-file exclusion | Inspect the archive contents. | TypeScript source, source maps, build scripts, documentation, dependencies, and repository metadata are excluded. |
-| ✅ | Packaged-extension smoke test | Load the versioned staging folder unpacked and test the primary flow. | The toolbar opens Settings, defaults load, shortcut expansion works, styles load, and the privacy link opens. |
+| ✅ | Packaged-extension smoke test | Load the versioned staging folder unpacked and test the primary flow. | The toolbar opens Settings, a fresh install starts empty, a newly added shortcut expands, styles load, and the privacy link opens. |
 
 ## Sensitive-field protection
 
@@ -129,8 +129,8 @@ the test specifically verifies behavior without a refresh.
 
 | Status | Test | Action | Expected result |
 |---|---|---|---|
-| ✅ | Fresh installation | Remove the extension, load it unpacked, and inspect Settings. | Development defaults initialize once. |
-| ✅ | Preserve existing storage | Reload or update the extension with saved snippets. | Existing snippets are not overwritten by defaults. |
+| ✅ | Fresh installation | Remove the extension, load it unpacked, and inspect Settings. | A valid empty collection initializes without sample snippets. |
+| ✅ | Preserve existing storage | Reload or update the extension with saved snippets. | Existing snippets are not overwritten by initialization. |
 | ✅ | Open-page update | Add, edit, delete, or import while a test page is open. | The content script receives the new collection without a refresh. |
 | ✅ | Same-page operation lock | Start a storage operation and attempt a competing Settings action. | Busy controls prevent overlapping actions. |
 | ✅ | Cross-tab stale import | Change storage after reviewing an import elsewhere. | Snapshot comparison blocks stale replacement. |
