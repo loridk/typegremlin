@@ -649,3 +649,17 @@ The landing page was published at `https://loridunford.com/typegremlin/` and
 verified over HTTPS for its current TypeGremlin branding and content. The Chrome
 Web Store worksheet now contains verified privacy, website, support, and source
 URLs with no remaining placeholders.
+
+### Initial Iframe Support Boundary
+
+Documented inputs and textareas hosted inside embedded frames as intentionally
+unsupported for the initial release. TypeGremlin's content script continues to
+run in the top-level document rather than enabling Manifest V3's `all_frames`
+content-script option immediately before release.
+
+Enabling frame-wide injection would broaden where TypeGremlin executes even
+though it would not add a named permission. Supporting it responsibly requires
+dedicated tests for same-origin, cross-origin, sandboxed, and dynamically
+created frames, along with another sensitive-field and compatibility review.
+That work is deferred to a future version instead of being partially added to
+1.0.0. No code, manifest, permission, or runtime behavior changed.

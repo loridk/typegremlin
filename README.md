@@ -20,8 +20,8 @@ TypeGremlin uses strict TypeScript with a minimal compiler-only build process.
 Chrome runs the generated JavaScript in `dist/`; no framework or bundler is
 currently required.
 
-Support for `contenteditable` and rich-text editors is planned but is not yet
-implemented.
+Support for `contenteditable`, rich-text editors, and fields hosted inside
+embedded frames is planned but is not yet implemented.
 
 ## Local development
 

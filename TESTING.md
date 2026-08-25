@@ -46,6 +46,7 @@ the test specifically verifies behavior without a refresh.
 | ✅ | React-controlled input | Type a shortcut in a React-controlled field. | Expansion persists without framework state reverting it. |
 | 🚫 | `contenteditable` | Type a shortcut in a `contenteditable` region. | No expansion occurs in the current version. |
 | 🚫 | Rich-text editor | Type in a Gmail-style rich-text editor. | No expansion is currently promised. |
+| 🚫 | Embedded iframe field | Type a shortcut in an input or textarea hosted inside an iframe. | No expansion is currently promised inside embedded frames. |
 
 ## Extension access
 
@@ -171,6 +172,8 @@ the test specifically verifies behavior without a refresh.
 
 - TypeGremlin currently supports standard inputs and textareas, not
   `contenteditable` or rich-text editors.
+- Inputs and textareas hosted inside embedded frames are not supported in the
+  current version.
 - The current extension targets Chrome Manifest V3; other Chromium browsers
   and Firefox have not been formally tested.
 - `document.execCommand("insertText")` is deprecated but remains isolated because

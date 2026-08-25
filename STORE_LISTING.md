@@ -38,7 +38,8 @@ browser. TypeGremlin does not transmit your snippets, typed content, browsing
 history, or website activity to the developer or another service.
 
 TypeGremlin currently supports standard inputs and textareas. Contenteditable
-regions and rich-text editors are not supported in this version.
+regions, rich-text editors, and fields hosted inside embedded frames are not
+supported in this version.
 
 ### Category
 
