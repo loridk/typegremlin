@@ -112,9 +112,12 @@ each public page is live and verified over HTTPS.
 
 - [x] Store icon: 128 × 128 PNG with padded artwork
   (`icons/icon128.png`)
-- [ ] Screenshot 1: 1280 × 800 — create and manage snippets
-- [ ] Screenshot 2: 1280 × 800 — expand a shortcut in a real standard web form
-- [ ] Screenshot 3: 1280 × 800 — local backup, restore, and privacy disclosure
+- [x] Screenshot 1: 1280 × 800 — create and manage snippets
+  (`store-assets/screenshots/01-settings.png`)
+- [x] Screenshot 2: 1280 × 800 — saved snippets and local backup/restore
+  (`store-assets/screenshots/02-backup-restore.png`)
+- [x] Screenshot 3: 1280 × 800 — expansion in a real standard web form
+  (`store-assets/screenshots/03-text-expansion.png`)
 - [ ] Small promotional tile: 440 × 280 PNG or JPEG
 
 At least one screenshot is required. The three planned screenshots provide a

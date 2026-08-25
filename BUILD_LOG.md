@@ -581,3 +581,18 @@ unchanged. Added `icons/typegremlin-store.svg` as the editable source for the
 padded 128px export while retaining `icons/typegremlin.svg` as the source for
 the compact working icons. No runtime behavior, permission, dependency, or
 network access changed.
+
+### Chrome Web Store Screenshots
+
+Prepared three 1280 × 800 Chrome Web Store screenshots showing TypeGremlin's
+current behavior: creating and managing a snippet, viewing local backup and
+restore controls, and expanding a saved shortcut in a real standard web form.
+
+The screenshots use demonstration-only `;test` and `Testing` content. They were
+reviewed for exact dimensions, readable composition, current functionality, and
+the absence of visible personal browser information. No unsupported feature or
+performance claim appears in the images.
+
+Store screenshots are kept under `store-assets/screenshots/` in their intended
+display order. These listing assets are repository documentation and are not
+included in the runtime extension ZIP.
