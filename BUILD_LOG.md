@@ -445,8 +445,36 @@ Accessibility testing covered Windows Narrator announcements, keyboard focus,
 200% and 400% browser zoom, and Windows Contrast Themes. Controls and content
 remained readable, reachable, and usable during the tested flows.
 
-Two cases remain intentionally pending. A Chrome storage-quota failure is not
-being forced through unsafe or misleading test setup, and reduced-motion
-behavior will be tested after styling introduces any animation or transition.
-The current version also documents `contenteditable` and rich-text expansion as
-unsupported rather than reporting them as failures.
+Chrome storage-quota failure remains intentionally pending because it is not
+being forced through unsafe or misleading test setup. The current version also
+documents `contenteditable` and rich-text expansion as unsupported rather than
+reporting them as failures.
+
+### Gremlin Plum Settings Design
+
+Added a dependency-free responsive stylesheet for the Settings page using the
+selected Gremlin plum direction: warm neutral surfaces, deep plum primary
+actions, and a restrained green accent for snippet identifiers and counts. The
+design uses system fonts and introduces no remote assets, scripts, permissions,
+or changes to snippet behavior.
+
+Major Settings sections now use clear card-like grouping. Forms, buttons, file
+controls, status messages, import confirmation, and saved snippets have
+consistent spacing and visible focus treatment. Existing semantic headings,
+labels, forms, status regions, and the snippet definition list remain intact.
+
+Saved snippet pairs use the existing `dt` and `dd` elements as a unified visual
+row on wider layouts and a stacked card at narrow widths. Testing exposed the
+browser's default left margin on `dd`; fully resetting that margin corrected the
+desktop gap and narrow-layout inset without changing the rendered markup.
+
+The final type scale keeps ordinary and helper text at user-selected sizes,
+while headings and controls retain a clear hierarchy. The layout was manually
+checked in Edit, Delete, and import-confirmation states, at narrow viewport
+widths, and at 400% browser zoom.
+
+Forced Colors rules preserve perceivable borders and remove decorative shadows.
+A `prefers-reduced-motion` rule suppresses nonessential animation and transition
+timing. Windows Contrast Themes and reduced-motion preferences were manually
+retested after styling, and the interface remained readable, reachable, and
+usable.

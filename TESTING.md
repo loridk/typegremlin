@@ -145,7 +145,7 @@ the test specifically verifies behavior without a refresh.
 | ✅ | Screen-reader announcements | Test with NVDA or another Windows screen reader. | Loading, validation, success, cancellation, and failure messages are announced clearly. |
 | ✅ | Zoom and text scaling | Test at 200% and 400% zoom. | Content remains usable without horizontal scrolling at supported widths. |
 | ✅ | High contrast | Test Windows High Contrast/Forced Colors. | Controls and focus remain perceivable. |
-| ⏳ | Reduced motion | Test reduced-motion preferences after styling. | Nonessential animation is removed or reduced. |
+| ✅ | Reduced motion | Test reduced-motion preferences after styling. | Nonessential animation is removed or reduced. |
 
 ## Known limitations
 
