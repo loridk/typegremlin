@@ -700,3 +700,28 @@ snippet creation and expansion, undo and redo, sensitive-field protection,
 backup export and restore, toolbar access, Settings styling, favicon, and
 privacy-policy link. The tested release candidate is ready for the Chrome Web
 Store dashboard submission workflow.
+
+## August 25, 2026 — Chrome Web Store Submission
+
+### Version 1.0.0 Submitted for Review
+
+Submitted the tested `typegremlin-1.0.0.zip` package to the Chrome Web Store.
+The submitted archive matches the release candidate that passed the clean-profile
+smoke test and is tagged in Git as `v1.0.0` at commit `16247c9`.
+
+Completed the Productivity store listing with the final description, three
+1280 × 800 screenshots, the required 440 × 280 promotional tile, the published
+privacy policy, official website, public source repository, and GitHub Issues
+support URL. The developer account's required two-step verification was also
+confirmed through the submission workflow.
+
+The Privacy practices form records TypeGremlin's narrow text-expansion purpose,
+justifies the `storage` permission and broad host access, declares that the
+extension uses no remote code, and discloses local handling of website content.
+The listing and privacy answers consistently state that snippet storage and
+shortcut matching remain on the device and are not transmitted to the developer
+or another service.
+
+The Chrome Web Store submission is currently pending review. TypeGremlin should
+not be described as published or available in the store until Google approves
+the submission and the public listing is live.

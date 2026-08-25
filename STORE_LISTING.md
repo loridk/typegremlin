@@ -147,10 +147,10 @@ The marquee image and video can wait until after the initial submission.
 - [x] Run `npm run package` and inspect the final ZIP.
 - [x] Load the versioned staging folder in a clean Chrome profile.
 - [x] Complete the full `TESTING.md` smoke test against the packaged build.
-- [ ] Upload and verify the required graphic assets.
-- [ ] Paste the product description and select Productivity.
-- [ ] Complete permission justifications and privacy-practice answers.
+- [x] Upload and verify the required graphic assets.
+- [x] Paste the product description and select Productivity.
+- [x] Complete permission justifications and privacy-practice answers.
 - [x] Add and verify the privacy, official website, support, and source
   repository URLs.
-- [ ] Confirm the developer account uses two-step verification.
-- [ ] Review every dashboard field for consistency before submission.
+- [x] Confirm the developer account uses two-step verification.
+- [x] Review every dashboard field for consistency before submission.
