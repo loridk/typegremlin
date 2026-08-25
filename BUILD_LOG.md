@@ -632,3 +632,20 @@ Updated the dependency-free release allowlist so the root favicon is packaged
 beside `privacy.html`. This keeps the packaged privacy page's favicon reference
 complete while reusing the established icon and introducing no remote asset,
 permission, network request, script, or dependency.
+
+### Published TypeGremlin Landing Page
+
+Added a standalone, responsive TypeGremlin landing page using the established G
+icon and Gremlin Plum design. It describes the extension's current features,
+local-first privacy model, and unsupported rich-text behavior without implying
+that the Chrome Web Store release is already available.
+
+The page uses semantic HTML, visible focus treatment, responsive layouts,
+Forced Colors support, system fonts, and no JavaScript, analytics, tracking, or
+remote assets. It links to the published privacy policy, public GitHub source,
+and GitHub Issues support channel.
+
+The landing page was published at `https://loridunford.com/typegremlin/` and
+verified over HTTPS for its current TypeGremlin branding and content. The Chrome
+Web Store worksheet now contains verified privacy, website, support, and source
+URLs with no remaining placeholders.

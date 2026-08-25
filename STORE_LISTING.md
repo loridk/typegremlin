@@ -98,12 +98,12 @@ Policy, including the Limited Use requirements.
 ## URLs
 
 - Privacy policy: https://loridunford.com/typegremlin/privacy.html
-- Official website: TODO — choose the public TypeGremlin project page.
+- Official website: https://loridunford.com/typegremlin/
 - Support URL: https://github.com/loridk/typegremlin/issues
 - Source repository: https://github.com/loridk/typegremlin
 
-Do not invent or submit placeholder URLs. Complete the TODO items only after
-each public page is live and verified over HTTPS.
+Each public page is live and verified over HTTPS. Recheck these destinations
+before final submission and whenever a URL changes.
 
 ## Graphic assets
 
@@ -149,7 +149,7 @@ The marquee image and video can wait until after the initial submission.
 - [ ] Upload and verify the required graphic assets.
 - [ ] Paste the product description and select Productivity.
 - [ ] Complete permission justifications and privacy-practice answers.
-- [ ] Add and verify the official website URL. The privacy, support, and source
-  repository URLs are verified.
+- [x] Add and verify the privacy, official website, support, and source
+  repository URLs.
 - [ ] Confirm the developer account uses two-step verification.
 - [ ] Review every dashboard field for consistency before submission.
