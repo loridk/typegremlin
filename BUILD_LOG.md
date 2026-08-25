@@ -528,3 +528,25 @@ The policy was published at
 HTTPS for its title, summary, and complete section structure. A matching local
 HTML copy remains in the repository and extension package as the editable source
 of truth and offline policy record.
+
+### Dependency-Free Release Packaging
+
+Added a reproducible `npm run package` workflow for creating a Chrome Web
+Store-ready release without adding a packaging dependency. The command runs the
+existing TypeScript check and build first, then stages an explicit allowlist of
+runtime files and creates a versioned ZIP with `manifest.json` at its root.
+
+The packaging script verifies that `package.json` and `manifest.json` use the
+same Chrome-compatible version and that every file referenced by the manifest
+exists in the staged package. It also checks the completed archive for its root
+manifest and rejects development files such as TypeScript source, source maps,
+build scripts, documentation, dependencies, and repository metadata.
+
+Generated release folders and ZIP files live under `release/` and are ignored
+by Git. The versioned staging folder remains available for unpacked testing so
+the exact packaged build can be checked before submission.
+
+Manual testing of the staged extension confirmed that the toolbar opens
+Settings, development defaults load, `;hello` expands, Settings styles load,
+and the published privacy-policy link opens correctly. The final ZIP was also
+inspected to confirm its expected root structure and runtime-only contents.

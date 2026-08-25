@@ -7,6 +7,7 @@
   "scripts": {
     "build": "tsc",
     "check": "tsc --noEmit",
+    "package": "npm run check && npm run build && node scripts/package.mjs",
     "watch": "tsc --watch"
   },
   "devDependencies": {

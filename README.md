@@ -47,6 +47,22 @@ TypeGremlin runs on all regular webpage URLs so it can expand text wherever the
 user types. It does not request access to tabs, browsing history, cookies, the
 clipboard, downloads, or the network.
 
+## Release package
+
+Create a Chrome Web Store-ready ZIP with:
+
+```bash
+npm run package
+```
+
+The command checks and compiles the TypeScript source, stages only the runtime
+files, verifies that the package and manifest versions match, confirms every
+manifest-referenced file is present, and creates
+`release/typegremlin-<version>.zip` with `manifest.json` at its root.
+
+The versioned staging folder remains beside the ZIP so it can be loaded unpacked
+for final testing. Release output is generated locally and ignored by Git.
+
 ## Project notes
 
 See [BUILD_LOG.md](BUILD_LOG.md) for implementation decisions and known

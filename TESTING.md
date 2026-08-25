@@ -54,6 +54,17 @@ the test specifically verifies behavior without a refresh.
 | ✅ | Toolbar action | Click TypeGremlin's Chrome toolbar button. | TypeGremlin Settings opens. |
 | ✅ | Branded icon | Reload the unpacked extension and inspect Chrome's toolbar and extension card. | The TypeGremlin icon is visible and recognizable. |
 
+## Release packaging
+
+| Status | Test | Action | Expected result |
+|---|---|---|---|
+| ✅ | Reproducible package command | Run `npm run package`. | Type checking and compilation pass before a versioned release folder and ZIP are created. |
+| ✅ | Runtime-file allowlist | Inspect the staged folder and ZIP. | Only the manifest, privacy policy, compiled scripts, icons, options HTML, and options CSS are included. |
+| ✅ | Manifest at ZIP root | Inspect the archive structure. | `manifest.json` is at the archive root rather than inside an extra parent folder. |
+| ✅ | Version agreement | Compare `package.json`, `manifest.json`, and the release filename. | All three use the same Chrome-compatible version. |
+| ✅ | Development-file exclusion | Inspect the archive contents. | TypeScript source, source maps, build scripts, documentation, dependencies, and repository metadata are excluded. |
+| ✅ | Packaged-extension smoke test | Load the versioned staging folder unpacked and test the primary flow. | The toolbar opens Settings, defaults load, shortcut expansion works, styles load, and the privacy link opens. |
+
 ## Sensitive-field protection
 
 | Status | Test | Action | Expected result |
