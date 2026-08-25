@@ -502,3 +502,29 @@ dimensions and manifest JSON were validated before manual visual testing.
 The icon is intentionally treated as replaceable branding rather than a locked
 final identity. No remote asset, runtime dependency, permission, or network
 request was added.
+
+### Published Privacy Policy and Local-Processing Disclosure
+
+Added a standalone TypeGremlin privacy policy based on the established
+CyberPhrase policy structure and adapted to TypeGremlin's actual behavior. It
+documents local snippet storage, transient shortcut matching, sensitive-field
+heuristics, broad website access, JSON backup handling, the absence of tracking
+and network requests, Chrome permissions, Limited Use compliance, policy
+updates, and contact information.
+
+The policy warns that Chrome extension storage is not an encrypted password
+vault and that TypeGremlin is not a password manager. It explains that
+password-field detection relies on website markup and should not replace careful
+handling of authentication secrets.
+
+Settings now prominently states that typed text is processed locally and that
+snippets and typed content are not sent to a server. The disclosure links to the
+published policy in a separate tab using `noopener` and `noreferrer` protections.
+The README links to the same public policy URL so repository, extension, store,
+and hosted disclosures can remain consistent.
+
+The policy was published at
+`https://loridunford.com/typegremlin/privacy.html` and manually verified over
+HTTPS for its title, summary, and complete section structure. A matching local
+HTML copy remains in the repository and extension package as the editable source
+of truth and offline policy record.

@@ -51,4 +51,6 @@ clipboard, downloads, or the network.
 
 See [BUILD_LOG.md](BUILD_LOG.md) for implementation decisions and known
 tradeoffs. See [TESTING.md](TESTING.md) for the manual test matrix, current
-results, and remaining test coverage.
+results, and remaining test coverage. See the published
+[privacy policy](https://loridunford.com/typegremlin/privacy.html) for
+TypeGremlin's local data practices.

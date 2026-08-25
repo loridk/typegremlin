@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeGremlin Privacy Policy</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --page-background: light-dark(#f7f3ee, #18141c);
+        --surface: light-dark(#fffdf9, #241f29);
+        --surface-soft: light-dark(#f0e8f2, #332b38);
+        --text: light-dark(#291e2f, #f6edf8);
+        --text-muted: light-dark(#665b69, #c9bdcc);
+        --brand: light-dark(#5b2a6e, #d4a8e5);
+        --border: light-dark(#d9cfdc, #514657);
+        --focus: light-dark(#2f6feb, #8ab4ff);
+        --shadow: 0 18px 45px
+          light-dark(rgba(67, 40, 75, 0.1), rgba(0, 0, 0, 0.28));
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+          BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.6;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 20rem;
+        margin: 0;
+        background: var(--page-background);
+        color: var(--text);
+        font-size: 1.125rem;
+      }
+
+      main {
+        width: min(100% - 2rem, 52rem);
+        margin-inline: auto;
+        padding-block: clamp(2rem, 6vw, 4.5rem);
+      }
+
+      header,
+      section {
+        padding: clamp(1.1rem, 3vw, 1.75rem);
+        border: 1px solid var(--border);
+        background: var(--surface);
+      }
+
+      header {
+        border-radius: 1.125rem 1.125rem 0 0;
+        box-shadow: var(--shadow);
+      }
+
+      section {
+        border-top: 0;
+      }
+
+      section:last-child {
+        border-radius: 0 0 1.125rem 1.125rem;
+        box-shadow: var(--shadow);
+      }
+
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 0.5rem;
+        color: var(--brand);
+        font-size: clamp(2rem, 5vw, 3rem);
+        line-height: 1.1;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        margin-bottom: 0.75rem;
+        color: var(--brand);
+        font-size: clamp(1.25rem, 3vw, 1.5rem);
+        line-height: 1.25;
+      }
+
+      p:last-child {
+        margin-bottom: 0;
+      }
+
+      .updated {
+        margin-bottom: 0;
+        color: var(--text-muted);
+      }
+
+      .summary {
+        background: var(--surface-soft);
+      }
+
+      a {
+        color: var(--brand);
+        font-weight: 650;
+        text-underline-offset: 0.2em;
+      }
+
+      :focus-visible {
+        outline: 3px solid var(--focus);
+        outline-offset: 3px;
+      }
+
+      @media (max-width: 26rem) {
+        main {
+          width: min(100% - 1rem, 52rem);
+          padding-block: 1rem;
+        }
+      }
+
+      @media (forced-colors: active) {
+        header,
+        section:last-child {
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>TypeGremlin Privacy Policy</h1>
+        <p class="updated"><strong>Last updated:</strong> August 24, 2026</p>
+      </header>
+
+      <section class="summary" aria-labelledby="summary-heading">
+        <h2 id="summary-heading">Summary</h2>
+        <p>
+          TypeGremlin does not collect, transmit, sell, or share user data.
+          Saved snippets and text-expansion processing remain local to your
+          device and are never sent to the developer or an external service.
+        </p>
+      </section>
+
+      <section aria-labelledby="local-storage-heading">
+        <h2 id="local-storage-heading">Information Stored Locally</h2>
+        <p>
+          TypeGremlin stores the shortcuts and replacement text you create
+          using <code>chrome.storage.local</code>, Chrome's extension-specific
+          local storage.
+        </p>
+        <p>
+          Saved snippets remain on your device until you delete them, replace
+          them by importing a backup, or uninstall TypeGremlin. Uninstalling the
+          extension removes its local storage.
+        </p>
+        <p>
+          Chrome's local extension storage is not an encrypted password vault.
+          TypeGremlin is not a password manager, and you should not use snippets
+          to store passwords, authentication codes, financial information, or
+          other highly sensitive secrets.
+        </p>
+      </section>
+
+      <section aria-labelledby="text-processing-heading">
+        <h2 id="text-processing-heading">Text Processing</h2>
+        <p>
+          To provide text expansion, TypeGremlin responds when you type in
+          supported standard text inputs and textareas. It examines the text
+          immediately before the cursor to determine whether it ends with one
+          of your saved shortcuts.
+        </p>
+        <p>
+          This processing occurs locally in your browser. TypeGremlin does not
+          save ordinary typed content, create a typing history, or transmit
+          typed content to the developer or another service.
+        </p>
+      </section>
+
+      <section aria-labelledby="sensitive-fields-heading">
+        <h2 id="sensitive-fields-heading">Sensitive Fields</h2>
+        <p>
+          TypeGremlin is designed to avoid text expansion in fields identified
+          as password-related. It checks signals including password input types,
+          password autocomplete values, and password-related field names or
+          identifiers.
+        </p>
+        <p>
+          Website markup varies, so this protection should not be treated as a
+          substitute for careful handling of sensitive information.
+          TypeGremlin should not be used to store or enter passwords or other
+          authentication secrets.
+        </p>
+      </section>
+
+      <section aria-labelledby="website-access-heading">
+        <h2 id="website-access-heading">Website Access</h2>
+        <p>
+          TypeGremlin runs on regular webpages so it can expand shortcuts
+          wherever you choose to type. This requires broad website access in
+          Chrome.
+        </p>
+        <p>
+          TypeGremlin uses this access only to detect saved shortcuts in
+          supported editable fields and insert the corresponding locally stored
+          replacement text. It does not collect browsing history, website
+          addresses, cookies, page contents, or information from fields where
+          expansion is not being performed.
+        </p>
+      </section>
+
+      <section aria-labelledby="backup-heading">
+        <h2 id="backup-heading">Backup and Restore</h2>
+        <p>
+          TypeGremlin can export saved snippets as a JSON backup file. The
+          exported file is created locally and downloaded through normal browser
+          behavior. TypeGremlin does not upload or transmit the backup.
+        </p>
+        <p>
+          Import occurs only when you select a backup file. The file is read and
+          validated locally before you confirm replacing the snippets stored on
+          your device.
+        </p>
+        <p>
+          Backup files contain the shortcut and replacement text you created.
+          You are responsible for storing exported files securely and deleting
+          them when they are no longer needed.
+        </p>
+      </section>
+
+      <section aria-labelledby="network-heading">
+        <h2 id="network-heading">Network Requests and Tracking</h2>
+        <p>
+          TypeGremlin does not require an account, external API, or network
+          request to provide text expansion, snippet management, backup, or
+          restore features.
+        </p>
+        <p>
+          TypeGremlin does not include analytics, advertising, tracking
+          technology, or third-party cookies.
+        </p>
+      </section>
+
+      <section aria-labelledby="permissions-heading">
+        <h2 id="permissions-heading">Chrome Extension Permissions</h2>
+        <p>
+          TypeGremlin requests Chrome's <code>storage</code> permission to save
+          snippets locally on your device.
+        </p>
+        <p>
+          Its content script runs on regular webpages so shortcuts can expand
+          across supported sites. TypeGremlin does not request access to browser
+          tabs, browsing history, cookies, the clipboard, downloads, or the
+          network.
+        </p>
+      </section>
+
+      <section aria-labelledby="limited-use-heading">
+        <h2 id="limited-use-heading">Limited Use</h2>
+        <p>
+          Information handled by TypeGremlin is used only to provide its
+          text-expansion, snippet-management, backup, and restore features.
+        </p>
+        <p>
+          TypeGremlin complies with the Chrome Web Store User Data Policy,
+          including its Limited Use requirements. Information is not transferred
+          to third parties or used for advertising, lending, creditworthiness,
+          or unrelated purposes.
+        </p>
+      </section>
+
+      <section aria-labelledby="changes-heading">
+        <h2 id="changes-heading">Changes to This Policy</h2>
+        <p>
+          This policy may be updated if TypeGremlin's functionality or data
+          practices change. The updated date at the top of this page identifies
+          the latest revision.
+        </p>
+      </section>
+
+      <section aria-labelledby="contact-heading">
+        <h2 id="contact-heading">Contact</h2>
+        <p>
+          Questions about TypeGremlin or this privacy policy can be sent through
+          <a href="https://loridunford.com/">Lori DK's website</a>.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
