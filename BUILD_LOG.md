@@ -663,3 +663,18 @@ dedicated tests for same-origin, cross-origin, sandboxed, and dynamically
 created frames, along with another sensitive-field and compatibility review.
 That work is deferred to a future version instead of being partially added to
 1.0.0. No code, manifest, permission, or runtime behavior changed.
+
+### Chrome Storage-Quota Failure Test
+
+Completed the final pending backup test using a temporary synthetic version 1
+backup containing 2,200 valid snippets and no user data. The 10.52 MiB file was
+small enough to pass TypeGremlin's 12 MiB file-size gate but large enough for
+Chrome to reject the resulting write against `storage.local`'s 10 MiB quota.
+
+TypeGremlin reviewed the valid backup, attempted the confirmed import, displayed
+its safe failure message, and preserved the existing sentinel snippet. The
+sentinel remained listed in Settings and continued to expand correctly after the
+failed write, confirming that the collection was not partially replaced.
+
+The synthetic quota fixture was deleted after testing and is not part of the
+repository or release package. No `unlimitedStorage` permission was added.

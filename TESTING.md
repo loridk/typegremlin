@@ -126,7 +126,7 @@ the test specifically verifies behavior without a refresh.
 | ✅ | Unexpected top-level field | Add an extra field to an otherwise valid backup. | Strict schema validation rejects it. |
 | ✅ | Oversized shortcut/replacement | Import values beyond application limits. | Validation rejects the complete backup. |
 | ✅ | Case-insensitive imported collision | Import keys differing only by case. | Validation rejects the complete backup. |
-| ⏳ | Storage quota failure | Attempt an import that Chrome cannot store. | Chrome rejects the write and existing snippets remain unchanged. |
+| ✅ | Storage quota failure | Attempt an import that Chrome cannot store. | Chrome rejects the write and existing snippets remain unchanged. |
 
 ## Storage lifecycle and concurrency
 
