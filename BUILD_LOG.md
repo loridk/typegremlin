@@ -609,3 +609,14 @@ The editable `store-assets/typegremlin-small-promo.svg` is retained beside the
 exported PNG. Both files are store-listing assets only and remain excluded from
 the runtime extension ZIP. No extension behavior, permission, dependency, or
 network access changed.
+
+### Public Source and Support URLs
+
+Made the TypeGremlin GitHub repository public and verified its repository
+description, project topics, GPL-3.0 license, TypeScript language classification,
+and `main` default branch. GitHub Issues is enabled as the public support and
+bug-reporting channel.
+
+The Chrome Web Store worksheet now records the verified public source and
+support URLs. The dedicated TypeGremlin website remains pending and is not
+treated as complete until its landing page is published and checked over HTTPS.
