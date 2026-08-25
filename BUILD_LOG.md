@@ -568,3 +568,16 @@ Manual Chrome testing confirmed that a fresh installation starts with zero
 saved snippets and no development samples. After adding a new snippet, expansion
 worked correctly and the packaged extension's toolbar action, Settings styles,
 and privacy-policy link continued to behave as expected.
+
+### Chrome Web Store Icon Spacing
+
+Adjusted only the 128px TypeGremlin icon used for Chrome Web Store presentation.
+The selected G artwork and existing palette remain unchanged, but the artwork is
+now centered within a 96px source area with 16px of transparent canvas padding
+on each side so it does not appear crowded in store surfaces.
+
+The smaller 16px, 32px, and 48px toolbar and extension-management icons remain
+unchanged. Added `icons/typegremlin-store.svg` as the editable source for the
+padded 128px export while retaining `icons/typegremlin.svg` as the source for
+the compact working icons. No runtime behavior, permission, dependency, or
+network access changed.

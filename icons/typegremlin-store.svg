@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Chrome Web Store export: 96px source artwork centered with 16px padding. -->
+  <g transform="translate(16 16) scale(0.75)">
+    <rect x="6" y="6" width="116" height="116" rx="27" fill="#f0e8f2" />
+    <path
+      fill="#5b2a6e"
+      d="M31 41 40 19l13 16c6-3 13-5 20-5 16 0 27 7 33 17L88 58c-3-6-9-9-16-9-14 0-23 9-23 23 0 15 10 24 24 24 7 0 13-2 17-5v-9H73V66h35v38c-11 8-23 12-36 12-29 0-48-17-48-44 0-14 5-24 14-32Z"
+    />
+    <path fill="#9fb54c" d="M91 88h17v28H91Z" />
+  </g>
+</svg>
