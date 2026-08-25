@@ -596,3 +596,16 @@ performance claim appears in the images.
 Store screenshots are kept under `store-assets/screenshots/` in their intended
 display order. These listing assets are repository documentation and are not
 included in the runtime extension ZIP.
+
+### Chrome Web Store Promotional Tile
+
+Added the required 440 × 280 small promotional tile using the established
+Gremlin Plum palette and selected G icon. The full-bleed design uses a simple
+brand-focused layout with the restrained message, “Type less. Keep it local.”
+It avoids screenshots, feature-list clutter, unsupported claims, ratings, and
+Chrome branding so it remains legible when displayed at smaller sizes.
+
+The editable `store-assets/typegremlin-small-promo.svg` is retained beside the
+exported PNG. Both files are store-listing assets only and remain excluded from
+the runtime extension ZIP. No extension behavior, permission, dependency, or
+network access changed.

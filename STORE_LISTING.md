@@ -118,7 +118,8 @@ each public page is live and verified over HTTPS.
   (`store-assets/screenshots/02-backup-restore.png`)
 - [x] Screenshot 3: 1280 × 800 — expansion in a real standard web form
   (`store-assets/screenshots/03-text-expansion.png`)
-- [ ] Small promotional tile: 440 × 280 PNG or JPEG
+- [x] Small promotional tile: 440 × 280 PNG
+  (`store-assets/typegremlin-small-promo.png`)
 
 At least one screenshot is required. The three planned screenshots provide a
 clearer account of the current user experience without advertising unsupported
