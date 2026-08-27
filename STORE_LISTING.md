@@ -98,6 +98,7 @@ Policy, including the Limited Use requirements.
 
 ## URLs
 
+- Chrome Web Store: https://chromewebstore.google.com/detail/typegremlin/jghkjpggpfnhmngdpcmoiofgldacoeli
 - Privacy policy: https://loridunford.com/typegremlin/privacy.html
 - Official website: https://loridunford.com/typegremlin/
 - Support URL: https://github.com/loridk/typegremlin/issues
@@ -105,6 +106,11 @@ Policy, including the Limited Use requirements.
 
 Each public page is live and verified over HTTPS. Recheck these destinations
 before final submission and whenever a URL changes.
+
+## Publication status
+
+Version 1.0.0 was approved and published in the Chrome Web Store on August 27,
+2026. The public extension ID is `jghkjpggpfnhmngdpcmoiofgldacoeli`.
 
 ## Graphic assets
 

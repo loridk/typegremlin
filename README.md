@@ -16,8 +16,8 @@ The initial 1.0.0 release:
 - opens Settings directly from its Chrome toolbar action; and
 - requests only Chrome's `storage` permission.
 
-Version 1.0.0 has been submitted to the Chrome Web Store and is currently
-pending review. It is not yet published in the store.
+Version 1.0.0 is available on the
+[Chrome Web Store](https://chromewebstore.google.com/detail/typegremlin/jghkjpggpfnhmngdpcmoiofgldacoeli).
 
 TypeGremlin uses strict TypeScript with a minimal compiler-only build process.
 Chrome runs the generated JavaScript in `dist/`; no framework or bundler is

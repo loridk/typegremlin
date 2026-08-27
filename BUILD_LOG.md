@@ -725,3 +725,21 @@ or another service.
 The Chrome Web Store submission is currently pending review. TypeGremlin should
 not be described as published or available in the store until Google approves
 the submission and the public listing is live.
+
+## August 27, 2026 — Chrome Web Store Approval
+
+### Version 1.0.0 Published
+
+Google approved TypeGremlin version 1.0.0 and published its public Chrome Web
+Store listing at
+`https://chromewebstore.google.com/detail/typegremlin/jghkjpggpfnhmngdpcmoiofgldacoeli`.
+The permanent extension ID is `jghkjpggpfnhmngdpcmoiofgldacoeli`.
+
+Updated the repository README and standalone project website to replace the
+pending-review language with the live install destination. The landing page now
+uses “Add to Chrome” as its primary action while retaining direct access to the
+public source repository and privacy policy.
+
+The approved store package remains version 1.0.0 and corresponds to the tested
+release candidate tagged as `v1.0.0`. No extension code, manifest permission,
+runtime package, or release tag changed as part of this documentation update.
